@@ -14,7 +14,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./app
+        working-directory: ./sos-avvocato-online
 
     steps:
       - name: Checkout repository
