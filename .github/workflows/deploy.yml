@@ -1,16 +1,20 @@
-name: Deploy to GitHub Pages
+name: Deploy PWA to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # o il branch di sviluppo principale
+      - main
 
 permissions:
-  contents: write  # necessario per scrivere su gh-pages
+  contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
 
     steps:
       - name: Checkout repository
@@ -19,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # o la versione del tuo progetto
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
@@ -31,6 +35,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          publish_dir: ./app/build
           publish_branch: gh-pages
-          force_orphan: true  # opzione utile per avere una storia pulita su gh-pages
+          force_orphan: true
