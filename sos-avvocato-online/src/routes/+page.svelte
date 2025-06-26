@@ -1,1 +1,1 @@
-<h1>Test deploy</h1>
+<nav class="bg-blue-600"></nav>
