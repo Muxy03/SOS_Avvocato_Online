@@ -5,5 +5,5 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), SvelteKitPWA()],
-	// base:"/SOS_Avvocato_Online/"
+	base:"/SOS_Avvocato_Online/"
 });
