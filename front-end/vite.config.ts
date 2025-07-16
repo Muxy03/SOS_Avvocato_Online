@@ -5,5 +5,5 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
-	base: '/SOS_Avvocato_Online/' // Your repository name
+	base: '/SOS_Avvocato_Online/front-end/' // Your repository name
 });
