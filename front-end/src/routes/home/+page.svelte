@@ -1,7 +1,10 @@
 <script lang="ts">
-    import Brevo from '$lib/brevo'
+	import clip from '$lib/assets/clip.svg';
 	const authorizedExtensions = ['.png', '.pdf'];
 	let files: FileList | undefined = $state();
+	let cache: FileList | undefined = $derived({ ...files } as FileList);
+	let textArea: HTMLTextAreaElement | undefined = $state();
+	let textEmail = $state('');
 
 	const deleteFile = (index: number) => {
 		if (files) {
@@ -9,6 +12,7 @@
 			let tmp = { ...files };
 
 			delete tmp[index];
+
 			for (let i = 0; i < tmp.length; i++) {
 				if (i !== index) {
 					list.items.add(tmp.item(i)!);
@@ -19,60 +23,70 @@
 		}
 	};
 
-	// const sendMail = () => {
-	// 	Brevo.message.subject = 'First email';
-	// 	Brevo.message.textContent = 'Hello world!';
-	// 	Brevo.message.sender = { name: 'John Doe', email: 'a.mussari@studenti.unipi.it' };
-	// 	Brevo.message.to = [{ email: 'andreamussari01@gmail.com', name: 'Jane Smith' }];
+	const resize = () => {
+		textArea!.style.height = 'auto';
+		textArea!.style.height = textArea!.scrollHeight + 'px';
+	};
 
-	// 	Brevo.emailAPI.sendTransacEmail(Brevo.message);
-	// };
+	$effect(() => {
+		textArea!.style.height = textArea!.scrollHeight + 'px';
+		textArea!.style.overflowY = 'hidden';
+	});
 </script>
 
-<div class="flex items-center justify-center">
-	<!-- Author: FormBold Team -->
-	<div class="mx-auto w-full max-w-[550px] bg-white">
-		<form class="px-9 py-4">
-			<div class="mb-5">
-				<label for="email" class="mb-3 block text-base font-medium text-[#07074D]">
-					Send files to this email:
-				</label>
-				<input
-					type="email"
-					name="email"
-					id="email"
-					placeholder="example@domain.com"
-					accept={authorizedExtensions.join(',')}
-					class="w-full rounded-md border border-[#e0e0e0] bg-white px-6 py-3 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-				/>
+<!-- Author: FormBold Team -->
+<div class="flex items-center">
+	<div class="min-w-[250px] max-w-full bg-white">
+		<form class="flex flex-col items-center gap-6" method="POST">
+			<div class="mb-5 flex flex-col gap-4">
+				<div class="flex  justify-between items-center gap-8">
+					<label for="email" class="block text-base font-medium text-[#07074D]">
+						Send Request:
+					</label>
+					<label for="file" class="mb-5 block text-xl font-semibold text-[#07074D]">
+						<svg
+							fill="#000000"
+							height="20px"
+							width="20px"
+							version="1.1"
+							id="Layer_1"
+							xmlns="http://www.w3.org/2000/svg"
+							xmlns:xlink="http://www.w3.org/1999/xlink"
+							viewBox="0 0 512 512"
+							xml:space="preserve"
+							data-darkreader-inline-fill=""
+							style="--darkreader-inline-fill: var(--darkreader-background-000000, #000000);"
+							><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></g><g id="SVGRepo_iconCarrier">
+								<g>
+									<g>
+										<path
+											d="M359.784,103.784v262.919c0,57.226-46.557,103.784-103.784,103.784s-103.784-46.557-103.784-103.784V103.784 c0-34.336,27.934-62.27,62.27-62.27c34.336,0,62.27,27.934,62.27,62.27v262.919c0,11.445-9.312,20.757-20.757,20.757 s-20.757-9.311-20.757-20.757V103.784H193.73v262.919c0,34.336,27.934,62.27,62.27,62.27s62.27-27.934,62.27-62.27V103.784 C318.27,46.557,271.713,0,214.487,0S110.703,46.557,110.703,103.784v262.919C110.703,446.82,175.883,512,256,512 s145.297-65.18,145.297-145.297V103.784H359.784z"
+										></path>
+									</g>
+								</g>
+							</g></svg
+						>
+					</label>
+					<input bind:files multiple type="file" name="file" id="file" class="sr-only" />
+				</div>
+				<textarea
+					bind:this={textArea}
+					bind:value={textEmail}
+					oninput={resize}
+					class="min-h-[200px] w-full rounded-md border border-[#e0e0e0] bg-white px-6 py-3 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+				></textarea>
 			</div>
 
-			<div class="mb-6 pt-4">
-				<label for="" class="mb-5 block text-xl font-semibold text-[#07074D]"> Upload File </label>
-
-				<div class="mb-8">
-					<input bind:files multiple type="file" name="file" id="file" class="sr-only" />
-					<label
-						for="file"
-						class="relative flex min-h-[200px] items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-12 text-center"
-					>
-						<div>
-							<span class="mb-2 block text-xl font-semibold text-[#07074D]"> Drop files here </span>
-							<span class="mb-2 block text-base font-medium text-[#6B7280]"> Or </span>
-							<span
-								class="inline-flex rounded border border-[#e0e0e0] px-7 py-2 text-base font-medium text-[#07074D]"
-							>
-								Browse
-							</span>
-						</div>
-					</label>
-				</div>
-
+			<div class="mx-auto flex w-full flex-col items-center gap-3.5">
 				{#if files}
 					{#each files as file, i}
-						<div class="mb-5 rounded-md bg-[#F5F7FB] px-8 py-4">
-							<div class="flex items-center justify-between">
-								<span class="truncate pr-3 text-base font-medium text-[#07074D]">
+						<div class="w-fit rounded-md bg-[#F5F7FB]">
+							<div class="flex items-center justify-between gap-3">
+								<span class="truncate text-base font-medium text-[#07074D]">
 									{file.name}
 								</span>
 								<button class="text-[#07074D]" aria-label="#" onclick={() => deleteFile(i)}>
@@ -105,8 +119,8 @@
 
 			<div>
 				<button
-                    onclick={sendMail}
-					class="hover:shadow-form w-full rounded-md bg-[#6A64F1] px-8 py-3 text-center text-base font-semibold text-white outline-none"
+					onclick={() => console.log(textEmail)}
+					class="hover:shadow-form h-16 w-24 rounded-md bg-[#6A64F1] text-center text-base font-semibold text-white outline-none"
 				>
 					Send File
 				</button>
@@ -114,75 +128,3 @@
 		</form>
 	</div>
 </div>
-
-<!-- <form
-	method="post"
-	use:enhance
-	enctype="multipart/form-data"
-	class="flex flex-col justify-center gap-2"
->
-	<div class="flex w-full items-center justify-center gap-1">
-		<div class="flex w-full items-center justify-center">
-			<label
-				for="dropzone-file"
-				class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-			>
-				<div class="flex flex-col items-center justify-center pb-6 pt-5">
-					<svg
-						class="mb-4 h-8 w-8 text-gray-500 dark:text-gray-400"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 20 16"
-					>
-						<path
-							stroke="currentColor"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-						/>
-					</svg>
-					<p class="mb-2 text-center text-sm text-gray-500 dark:text-gray-400">
-						<span class="font-semibold">Click to upload</span> or drag and drop
-					</p>
-					<p class="text-xs text-gray-500 dark:text-gray-400">
-						{authorizedExtensions.map((ext) => ext.replace('.', '').toUpperCase()).join(', ')}
-					</p>
-				</div>
-				<input
-					bind:files
-					id="dropzone-file"
-					type="file"
-					class="hidden"
-					accept={authorizedExtensions.join(',')}
-					multiple
-				/>
-			</label>
-		</div>
-
-		<div class="flex min-h-fit w-full flex-col items-center bg-gray-700">
-			<table class="w-full p-5">
-				<thead>
-					<tr>
-						<td class="text-center text-gray-500 dark:text-gray-400"> Files: </td>
-					</tr>
-				</thead>
-				<tbody class="w-full">
-					{#if files !== null}
-						{#each files as file}
-							<tr class="w-full border border-amber-50">
-								<td class="p-2 text-center text-sm text-gray-500 dark:text-gray-400">{file.name}</td
-								>
-							</tr>
-						{/each}
-					{/if}
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<button type="submit">Submit</button>
-</form> -->
-
-<!-- <embed src={URL.createObjectURL(file)} width="250" height="200" /> -->
