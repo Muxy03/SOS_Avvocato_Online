@@ -1,1 +1,0 @@
-import"../chunks/NZTpNUN0.js";import"../chunks/BY7aYyEN.js";import{j as t,k as i}from"../chunks/BY4OqWhN.js";var n=t('<div class="min-w-screen flex min-h-screen items-center justify-center"><h1>TESTING RENDER DEPLOY</h1></div>');function a(e){var r=n();i(e,r)}export{a as component};
