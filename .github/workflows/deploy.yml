@@ -1,40 +1,45 @@
-name: Deploy Svelte Frontend to GitHub Pages
+
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ main ]
-    paths: [ 'front-end/**' ]  # Only trigger on frontend changes
-  workflow_dispatch:  # Allow manual trigger
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: front-end/package-lock.json
-        
+
     - name: Install dependencies
-      run: |
-        cd front-end
-        npm ci
-        
-    - name: Build Svelte app
-      run: |
-        cd front-end
-        npm run build
-        
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
+      run: npm ci
+
+    - name: Build
+      run: cd ./front-end/ && npm run build
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./front-end/build  # Change to 'build' if using older Svelte
-        #cname: your-domain.com  # Optional: only if using custom domain
+        path: './front-end/build'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
