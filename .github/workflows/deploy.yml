@@ -1,40 +1,40 @@
-name: Deploy PWA to GitHub Pages
+name: Deploy Frontend to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: write
+    branches: [ gh-pages ]
+  pull_request:
+    branches: [ gh-pages ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./sos-avvocato-online
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./sos-avvocato-online/build
-          publish_branch: gh-pages
-          force_orphan: true
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    # Frontend Build
+    - name: Setup Node.js for Frontend
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: front-end/package-lock.json
+    
+    - name: Install frontend dependencies
+      run: npm ci
+      working-directory: ./front-end
+    
+    - name: Build frontend
+      run: npm run build
+      working-directory: ./front-end
+    
+    # Deploy Frontend Build to GitHub Pages
+    - name: Deploy Frontend to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/gh-pages'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./front-end/build
+        # cname: your-domain.com # Optional: uncomment if using custom domain

@@ -1,1 +1,0 @@
-<nav class="bg-blue-600">CAZZO 123</nav>
