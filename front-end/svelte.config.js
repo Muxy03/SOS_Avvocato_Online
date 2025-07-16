@@ -6,7 +6,7 @@ const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
-	kit: { adapter: adapter(), base: process.env.NODE_ENV === 'production' ? '/your-repo-name' : '' }
+	kit: { adapter: adapter(), base: process.env.NODE_ENV === 'production' ? '/SOS_Avvocato_Online' : '' }
 };
 
 export default config;
