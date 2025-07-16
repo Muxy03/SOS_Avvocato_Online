@@ -1,1 +1,0 @@
-import{D as a}from"./D7Q30rfQ.js";a();

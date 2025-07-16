@@ -343,6 +343,7 @@ function update_derived(derived) {
 const batches = /* @__PURE__ */ new Set();
 let current_batch = null;
 let batch_deriveds = null;
+let effect_pending_updates = /* @__PURE__ */ new Set();
 let queued_root_effects = [];
 let last_scheduled_effect = null;
 let is_flushing = false;
@@ -533,6 +534,13 @@ class Batch {
   }
   deactivate() {
     current_batch = null;
+    for (const update of effect_pending_updates) {
+      effect_pending_updates.delete(update);
+      update();
+      if (current_batch !== null) {
+        break;
+      }
+    }
   }
   neuter() {
     this.#neutered = true;
@@ -549,7 +557,7 @@ class Batch {
     if (this.#pending === 0) {
       batches.delete(this);
     }
-    current_batch = null;
+    this.deactivate();
   }
   flush_effects() {
     var was_updating_effect = is_updating_effect;
@@ -602,6 +610,8 @@ class Batch {
       this.#render_effects = [];
       this.#effects = [];
       this.flush();
+    } else {
+      this.deactivate();
     }
   }
   /** @param {() => void} fn */
@@ -611,23 +621,25 @@ class Batch {
   settled() {
     return (this.#deferred ??= deferred()).promise;
   }
-  static ensure() {
+  static ensure(autoflush = true) {
     if (current_batch === null) {
       const batch = current_batch = new Batch();
       batches.add(current_batch);
-      queueMicrotask(() => {
-        if (current_batch !== batch) {
-          return;
-        }
-        batch.flush();
-      });
+      if (autoflush) {
+        queueMicrotask(() => {
+          if (current_batch !== batch) {
+            return;
+          }
+          batch.flush();
+        });
+      }
     }
     return current_batch;
   }
 }
 function flushSync(fn) {
   var result;
-  const batch = Batch.ensure();
+  const batch = Batch.ensure(false);
   while (true) {
     flush_tasks();
     if (queued_root_effects.length === 0) {
@@ -853,16 +865,6 @@ function proxy(value) {
             increment(version);
           }
         } else {
-          if (is_proxied_array && typeof prop === "string") {
-            var ls = (
-              /** @type {Source<number>} */
-              sources.get("length")
-            );
-            var n = Number(prop);
-            if (Number.isInteger(n) && n < ls.v) {
-              set(ls, n);
-            }
-          }
           set(s, UNINITIALIZED);
           increment(version);
         }
@@ -2110,7 +2112,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "t6gqv2"
+  version_hash: "1110a1j"
 };
 async function get_hooks() {
   let handle;

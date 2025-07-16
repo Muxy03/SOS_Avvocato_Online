@@ -10,12 +10,13 @@ return {
 	assets: new Set(["favicon.svg"]),
 	mimeTypes: {".svg":"image/svg+xml"},
 	_: {
-		client: {start:"_app/immutable/entry/start.C8RSx3BO.js",app:"_app/immutable/entry/app.CkGmuuht.js",imports:["_app/immutable/entry/start.C8RSx3BO.js","_app/immutable/chunks/BajPXQzm.js","_app/immutable/chunks/DRY0BXC3.js","_app/immutable/chunks/D7Q30rfQ.js","_app/immutable/chunks/Cvo7YCmY.js","_app/immutable/chunks/CvUM0VS7.js","_app/immutable/entry/app.CkGmuuht.js","_app/immutable/chunks/D7Q30rfQ.js","_app/immutable/chunks/Cvo7YCmY.js","_app/immutable/chunks/NZTpNUN0.js","_app/immutable/chunks/DRY0BXC3.js","_app/immutable/chunks/CvUM0VS7.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.Cq6Jqr3N.js",app:"_app/immutable/entry/app.BqgzY9eb.js",imports:["_app/immutable/entry/start.Cq6Jqr3N.js","_app/immutable/chunks/C1_reZ7Y.js","_app/immutable/chunks/DbM7_-HL.js","_app/immutable/chunks/Dkbj-q8P.js","_app/immutable/chunks/cOdPvYl_.js","_app/immutable/chunks/7qoDhBEs.js","_app/immutable/entry/app.BqgzY9eb.js","_app/immutable/chunks/Dkbj-q8P.js","_app/immutable/chunks/cOdPvYl_.js","_app/immutable/chunks/NZTpNUN0.js","_app/immutable/chunks/DbM7_-HL.js","_app/immutable/chunks/7qoDhBEs.js","_app/immutable/chunks/BDGSsmot.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
-			__memo(() => import('./chunks/0-nOc8ERVA.js')),
-			__memo(() => import('./chunks/1-qGYMns2N.js')),
-			__memo(() => import('./chunks/2-B4moYtxW.js')),
-			__memo(() => import('./chunks/3-h-c8n7w8.js'))
+			__memo(() => import('./chunks/0-BE370ZUV.js')),
+			__memo(() => import('./chunks/1-DOUeDsKO.js')),
+			__memo(() => import('./chunks/2-BtMSDTkK.js')),
+			__memo(() => import('./chunks/3-Bq_NtTZK.js')),
+			__memo(() => import('./chunks/4-CZ--wGAS.js'))
 		],
 		routes: [
 			{
@@ -30,6 +31,13 @@ return {
 				pattern: /^\/about\/([^/]+?)\/?$/,
 				params: [{"name":"id","optional":false,"rest":false,"chained":false}],
 				page: { layouts: [0,], errors: [1,], leaf: 3 },
+				endpoint: null
+			},
+			{
+				id: "/home",
+				pattern: /^\/home\/?$/,
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 4 },
 				endpoint: null
 			}
 		],
