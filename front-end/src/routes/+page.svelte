@@ -1,2 +1,3 @@
-<h1>Ciao</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<div class="min-w-screen flex min-h-screen items-center justify-center">
+	<h1>TESTING RENDER DEPLOY</h1>
+</div>
