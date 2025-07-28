@@ -1,28 +1,61 @@
-// import FormData from 'form-data';
-// import Mailgun from 'mailgun.js';
+type Attachment = {
+	name: string;
+	content: string;
+};
 
-// const mailgun = new Mailgun(FormData);
+export type Email = {
+	sender: { email: string; name: string };
+	to: { email: string; name: string }[];
+	subject: string;
+	htmlContent: string;
+	textContent: string;
+	attachment: Attachment[];
+};
 
-// const mg = mailgun.client({
-//   username: 'api',
-//   key: import.meta.env.VITE_MAILGUN_API || 'key-yourkeyhere',
-//   url: 'https://api.mailgun.net', // Use 'https://api.eu.mailgun.net' for EU infrastructure
-// });
+export type FILE = {
+	id: number;
+	file: File;
+	name: string;
+	size: number;
+	type: string;
+};
 
-// const sendEmail = async () => {
-//   try {
-//     const response = await mg.messages.create('sandbox537b2f9980714c99bdb85f98a0a8a009.mailgun.org', {
-//       from: "Excited User <mailgun@sandbox537b2f9980714c99bdb85f98a0a8a009.mailgun.org>",
-//       to: ["andreamussari01@gmail.com"],
-//       subject: "Hello",
-//       text: "Testing some Mailgun awesomeness!",
-//     });
-//     console.log('Email sent:', response);
-//   } catch (error) {
-//     console.error('Error sending email:', error);
-//   }
-// };
+export function toBase64Browser(file: File | Blob): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => resolve(reader.result as string);
+		reader.onerror = (err) => reject(err);
+	});
+}
 
-// export const sender = {
-//   send : sendEmail
-// }
+export async function sendTransactionalEmail(email: Email, attachments: FILE[]) {
+	const url = 'https://api.brevo.com/v3/smtp/email';
+	const headers = {
+		'Content-Type': 'application/json',
+		Accept: 'application/json',
+		'api-key': import.meta.env.VITE_BREVO_API_KEY
+	};
+
+	for (const file of attachments) {
+		email.attachment.push({
+			name: file.name,
+			content: (await toBase64Browser(file.file)).split(',')[1]
+		});
+	}
+
+	console.log(email)
+
+	const resp = await fetch(url, {
+		method: 'POST',
+		headers,
+		body: JSON.stringify(email)
+	});
+
+	if (!resp.ok) {
+		const errorBody = await resp.json().catch(() => null);
+		throw new Error(`HTTP ${resp.status}: ${JSON.stringify(errorBody)}`);
+	}
+
+	return resp.json(); // e.g. { messageId: "..." }
+}
