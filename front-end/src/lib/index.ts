@@ -12,7 +12,53 @@ import type { User } from 'firebase/auth';
 
 export interface AppContext {
 	isOnline: { value: boolean };
-    isLoading: { value: boolean };
+	isLoading: { value: boolean };
 	user: { value: User | null };
 	error: { value: string };
+	RememberMe: { value: boolean };
 }
+
+export type UserData = {
+	id: string;
+	FullName: string;
+	email: string;
+	createdAt: string;
+	lastLogin: string;
+	Emails: Consultation[];
+};
+
+export type UserAdmin = {
+	email: 'admin';
+	password: 'admin';
+};
+
+type Attachment = {
+	name: string;
+	content: string;
+};
+
+export type Email = {
+	sender: { email: string; name: string };
+	to: { email: string; name: string }[];
+	subject: string;
+	htmlContent: string;
+	textContent: string;
+	attachment?: Attachment[];
+};
+
+export type Consultation = {
+	id: string;
+	userID: string;
+	email: Email;
+	createdAt: string;
+	updatedAt: string;
+	status: 'pending' | 'completed' | 'in-progress' | 'cancelled';
+};
+
+export type FILE = {
+	id: number;
+	file: File;
+	name: string;
+	size: number;
+	type: string;
+};

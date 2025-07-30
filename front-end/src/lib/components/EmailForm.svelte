@@ -1,28 +1,21 @@
 <script lang="ts">
-	import { sendTransactionalEmail, toBase64Browser, type Email, type FILE } from '$lib/brevo';
+	import { enhance } from '$app/forms';
+	import type { FILE, Email, AppContext } from '$lib';
+	import { getContext } from 'svelte';
 
 	// State variables
-	let to = $state('');
+	let to = $state('a.mussari@studenti.unipi.it');
 	let cc = $state('');
 	let bcc = $state('');
-	let subject = $state('');
-	let message = $state('');
+	let subject = $state('TEST');
+	let message = $state('TESTING');
 	let attachments: FILE[] = $state([]);
 	let isSubmitting = $state(false);
 	let showCcBcc = $state(false);
 	let errors = $derived({ to: to, subject: subject, message: message });
 	let fileInput: HTMLInputElement | undefined = $state();
 
-	async function F() {
-		let res = []
-		for( const file of attachments){
-			res.push({
-				name: file.name,
-				content: await toBase64Browser(file.file)
-			})
-		}
-		return res
-	}
+	const { error }: AppContext = getContext('App');
 
 	function Test() {
 		const Test = {
@@ -88,30 +81,6 @@
 		return Object.keys(newErrors).length === 0;
 	}
 
-	async function handleSubmit(event: Event) {
-		event.preventDefault();
-		if (!validateForm()) return;
-		isSubmitting = true;
-		try {
-			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-			alert('Email sent successfully!');
-			// Reset form
-			to = '';
-			cc = '';
-			bcc = '';
-			subject = '';
-			message = '';
-			attachments = [];
-			showCcBcc = false;
-			errors = { to, subject, message };
-		} catch (error) {
-			alert('Failed to send email. Please try again.');
-		} finally {
-			isSubmitting = false;
-		}
-	}
-
 	function handleCancel() {
 		if (confirm('Are you sure you want to cancel? All data will be lost.')) {
 			to = '';
@@ -123,11 +92,6 @@
 			showCcBcc = false;
 			errors = { to, subject, message };
 		}
-	}
-
-	// Clear specific field errors
-	function clearError(field: string) {
-		// errors = { ...errors, [field]: null };
 	}
 </script>
 
@@ -145,23 +109,44 @@
 			</div>
 
 			<!-- Form -->
-			<form class="flex flex-col" method="POST" action="?/sendEmail">
+			<form
+				class="flex flex-col"
+				method="POST"
+				action="?/sendEmail"
+				use:enhance={({ formData }) => {
+					isSubmitting = true;
+
+					// Add form data
+					formData.set('to', to);
+					formData.set('subject', subject);
+					formData.set('message', message);
+
+					return async ({ result, update }) => {
+						isSubmitting = false;
+
+						if (result.type === 'success') {
+							await update();
+						} else if (result.type === 'failure') {
+							// TODO: Handle FIREBASE ERROR
+							error.value = result.data?.code as string;
+							await update();
+						}
+					};
+				}}
+			>
 				<!-- To field -->
-				<div class="flex items-center justify-between">
+				<div class="flex items-center justify-between gap-4">
 					<label for="sender-mail" class="block text-sm font-medium text-gray-700"> To </label>
 					<input
 						id="sender-mail"
 						type="email"
 						bind:value={to}
-						oninput={() => clearError('to')}
 						placeholder="recipient@example.com"
-						class="w-2/3 rounded-md border border-gray-300 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none {errors.to
-							? 'border-red-300'
-							: ''}"
+						class="w-full rounded-md border border-gray-300 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					/>
-					{#if errors.to}
+					<!-- {#if errors.to}
 						<p class="mt-1 text-sm text-red-600">{errors.to}</p>
-					{/if}
+					{/if} -->
 				</div>
 
 				<!-- CC/BCC toggle -->
@@ -211,15 +196,12 @@
 						id="subject"
 						type="text"
 						bind:value={subject}
-						oninput={() => clearError('subject')}
 						placeholder="Enter email subject"
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none {errors.subject
-							? 'border-red-300'
-							: ''}"
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					/>
-					{#if errors.subject}
+					<!-- {#if errors.subject}
 						<p class="mt-1 text-sm text-red-600">{errors.subject}</p>
-					{/if}
+					{/if} -->
 				</div>
 
 				<!-- Message field -->
@@ -231,15 +213,12 @@
 						id="message"
 						rows="6"
 						bind:value={message}
-						oninput={() => clearError('message')}
 						placeholder="Enter your message here..."
-						class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none {errors.message
-							? 'border-red-300'
-							: ''}"
+						class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					></textarea>
-					{#if errors.message}
+					<!-- {#if errors.message}
 						<p class="mt-1 text-sm text-red-600">{errors.message}</p>
-					{/if}
+					{/if} -->
 				</div>
 
 				<!-- Attachments section -->

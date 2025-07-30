@@ -1,29 +1,39 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import type { Actions } from '@sveltejs/kit';
-import { redirect, fail } from '@sveltejs/kit';
 import firebase from '$lib/firebase';
-import { type AppContext } from '$lib';
-import { saveUserDataLocally } from '$lib/Locally';
-import { getContext } from 'svelte';
-
-const { user }: AppContext = getContext('App');
+import { fail } from '@sveltejs/kit';
+import { addDoc, collection } from 'firebase/firestore';
 
 export const actions: Actions = {
-	register: async ({ request }) => {
+	register: async ({ fetch, request }) => {
 		const formData = await request.formData();
+		const fullName = formData.get('fullName') as string;
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
-		const userCredential = await createUserWithEmailAndPassword(firebase.auth, email, password);
+		try {
+			const User = (await createUserWithEmailAndPassword(firebase.auth, email, password)).user;
 
-		if (!userCredential.user) {
-			return fail(400, { error: 'Invalid credentials' });
+			await fetch('/api/session', {
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(User)
+			});
+
+			await addDoc(collection(firebase.db, 'Users'), {
+				id: User.uid,
+				FullName: fullName,
+				email: User.email,
+				createdAt: Date.now().toString(),
+				lastLogin: Date.now().toString(),
+				Emails: []
+			});
+		} catch (err: unknown) {
+			console.error('Registration error:', err);
+			return fail(400, {
+				error: JSON.stringify(err)
+			});
 		}
-
-		user.value = userCredential.user;
-
-		saveUserDataLocally(user.value);
-
-		throw redirect(303, '/home');
 	}
 };

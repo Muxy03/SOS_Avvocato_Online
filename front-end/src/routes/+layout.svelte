@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { onMount, setContext } from 'svelte';
+	import { onDestroy, onMount, setContext } from 'svelte';
 	import {
 		onAuthStateChanged,
 		setPersistence,
@@ -8,19 +8,21 @@
 		type User
 	} from 'firebase/auth';
 	import firebase from '$lib/firebase';
-	import { clearUserDataLocally, loadUserDataLocally, saveUserDataLocally } from '$lib/Locally';
+	import { clearUserSession, getUserSession, storeUserSession } from '$lib/Locally';
 	import { navigating } from '$app/state';
 
 	let { children } = $props();
 
 	const isOnline = $state({ value: true });
-	const user: { value: User | null } = $state({ value: null });
+	const rememberMe = $state({ value: true });
+	let user: { value: User | null } = $state({ value: null });
 	const error = $state({ value: '' });
 	const isLoading = $state({ value: navigating.complete !== null });
 
 	setContext('App', {
 		isOnline,
 		isLoading,
+		rememberMe,
 		user,
 		error
 	});
@@ -46,9 +48,9 @@
 		const unsubscribe = onAuthStateChanged(firebase.auth, (authUser) => {
 			if (authUser) {
 				user.value = authUser;
-				saveUserDataLocally(authUser);
+				storeUserSession(authUser);
 			} else {
-				clearUserDataLocally();
+				clearUserSession();
 			}
 		});
 
@@ -57,7 +59,14 @@
 		window.addEventListener('offline', updateOnlineStatus);
 
 		if (!isOnline) {
-			loadUserDataLocally();
+			async () => {
+				const session = await getUserSession();
+				if (session) {
+					user.value = session;
+				} else {
+					user.value = null;
+				}
+			};
 		}
 
 		return () => {
@@ -67,8 +76,21 @@
 		};
 		// Controlla se l'app è in modalità standalone (installata)
 	});
+
+	onDestroy(() => {
+		if (!rememberMe.value) {
+			(async () => {
+				await fetch('/api/session', {
+					method: 'DELETE',
+					credentials: 'same-origin',
+					headers: { 'Content-Type': 'application/json' },
+					body: ''
+				});
+			})();
+		}
+	});
 </script>
 
-<div class="flex min-h-screen min-w-screen flex-col items-center justify-center">
+<div class="flex min-h-screen min-w-screen flex-col items-center justify-center bg-blue-900">
 	{@render children()}
 </div>

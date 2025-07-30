@@ -1,7 +1,5 @@
-import { serverTimestamp } from 'firebase/firestore';
+// import { serverTimestamp } from 'firebase/firestore';
 import { type User } from 'firebase/auth';
-import type { AppContext } from '$lib';
-import { getContext } from 'svelte';
 
 export function getInitials(name: string, email: string) {
 	if (name && name.trim()) {
@@ -16,40 +14,70 @@ export function getInitials(name: string, email: string) {
 	return email.charAt(0).toUpperCase();
 }
 
-export function saveUserDataLocally(userData: User) {
-	if ('localStorage' in window) {
-		const userInfo = {
-			uid: userData.uid,
-			email: userData.email,
-			displayName: userData.displayName,
-			photoURL: userData.photoURL,
-			lastLogin: serverTimestamp()
-		};
-
-		localStorage.setItem('user_data', JSON.stringify(userInfo));
-	}
+export async function storeUserSession(userInfo: User) {
+	await fetch('/api/session', {
+		method: 'POST',
+		credentials: 'same-origin',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(userInfo)
+	});
+	// Optionally redirect or update UI after login
 }
 
-export function loadUserDataLocally() {
-	const { user }: AppContext = getContext('App');
-
-	if ('localStorage' in window) {
-		const userData = localStorage.getItem('user_data');
-		if (userData) {
-			const userInfo = JSON.parse(userData);
-			// Directly assign to reactive state
-			user.value = {
-				uid: userInfo.uid,
-				email: userInfo.email,
-				displayName: userInfo.displayName,
-				photoURL: userInfo.photoURL
-			} as User;
-		}
-	}
+export async function clearUserSession() {
+	await fetch('/api/session', {
+		method: 'DELETE',
+		credentials: 'same-origin'
+	});
+	// Optionally redirect or update UI after logout
 }
 
-export function clearUserDataLocally() {
-	if ('localStorage' in window) {
-		localStorage.removeItem('user_data');
+export async function getUserSession() {
+	const response = await fetch('/api/session', {
+		method: 'GET',
+		credentials: 'same-origin'
+	});
+	if (response.ok) {
+		const userSession = await response.json();
+		return userSession ? JSON.parse(userSession) : null;
 	}
+	return null;
 }
+
+// export function saveUserDataLocally(userData: User) {
+// 	if ('localStorage' in window) {
+// 		const userInfo = {
+// 			uid: userData.uid,
+// 			email: userData.email,
+// 			displayName: userData.displayName,
+// 			photoURL: userData.photoURL,
+// 			lastLogin: serverTimestamp()
+// 		};
+
+// 		localStorage.setItem('user_data', JSON.stringify(userInfo));
+// 	}
+// }
+
+// export function loadUserDataLocally() {
+// 	const { user }: AppContext = getContext('App');
+
+// 	if ('localStorage' in window) {
+// 		const userData = localStorage.getItem('user_data');
+// 		if (userData) {
+// 			const userInfo = JSON.parse(userData);
+// 			// Directly assign to reactive state
+// 			user.value = {
+// 				uid: userInfo.uid,
+// 				email: userInfo.email,
+// 				displayName: userInfo.displayName,
+// 				photoURL: userInfo.photoURL
+// 			} as User;
+// 		}
+// 	}
+// }
+
+// export function clearUserDataLocally() {
+// 	if ('localStorage' in window) {
+// 		localStorage.removeItem('user_data');
+// 	}
+// }

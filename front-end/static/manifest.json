@@ -1,5 +1,5 @@
-{    "name": "APP NAME",
-    "description": "YOUR DESCRIPTION",
+{    "name": "SOS Avvocato Online",
+    "description": "Consulenza legale sul tuo telefono!",
     "display": "standalone",
     "start_url": "/",
   "icons": [

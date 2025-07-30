@@ -1,24 +1,6 @@
-type Attachment = {
-	name: string;
-	content: string;
-};
-
-export type Email = {
-	sender: { email: string; name: string };
-	to: { email: string; name: string }[];
-	subject: string;
-	htmlContent: string;
-	textContent: string;
-	attachment: Attachment[];
-};
-
-export type FILE = {
-	id: number;
-	file: File;
-	name: string;
-	size: number;
-	type: string;
-};
+import { addDoc, arrayUnion, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
+import firebase from './firebase';
+import type { Email, FILE, Consultation } from '$lib';
 
 export function toBase64Browser(file: File | Blob): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -29,7 +11,7 @@ export function toBase64Browser(file: File | Blob): Promise<string> {
 	});
 }
 
-export async function sendTransactionalEmail(email: Email, attachments: FILE[]) {
+export async function sendTransactionalEmail(email: Email, userUid: string, attachments?: FILE[]) {
 	const url = 'https://api.brevo.com/v3/smtp/email';
 	const headers = {
 		'Content-Type': 'application/json',
@@ -37,14 +19,16 @@ export async function sendTransactionalEmail(email: Email, attachments: FILE[]) 
 		'api-key': import.meta.env.VITE_BREVO_API_KEY
 	};
 
-	for (const file of attachments) {
-		email.attachment.push({
-			name: file.name,
-			content: (await toBase64Browser(file.file)).split(',')[1]
-		});
+	if (attachments) {
+		if (attachments.length > 0) {
+			for (const file of attachments) {
+				email.attachment?.push({
+					name: file.name,
+					content: (await toBase64Browser(file.file)).split(',')[1]
+				});
+			}
+		}
 	}
-
-	console.log(email)
 
 	const resp = await fetch(url, {
 		method: 'POST',
@@ -57,5 +41,36 @@ export async function sendTransactionalEmail(email: Email, attachments: FILE[]) 
 		throw new Error(`HTTP ${resp.status}: ${JSON.stringify(errorBody)}`);
 	}
 
-	return resp.json(); // e.g. { messageId: "..." }
+	const { messageId } = await resp.json();
+
+	const Consultation: Consultation = {
+		userID: userUid,
+		id: messageId,
+		email,
+		createdAt: new Date().toDateString(),
+		updatedAt: new Date().toDateString(),
+		status: 'pending'
+	};
+
+	try {
+		const Users = (await getDocs(collection(firebase.db, 'Users'))).docs;
+
+		const User = Users.find((dc) => dc.data().id === userUid);
+
+		if (!User) {
+			throw new Error('NO USER');
+		}
+
+		await updateDoc(doc(firebase.db, 'Users', User.id), {
+			Emails: arrayUnion(Consultation)
+		});
+
+		const newdoc = await addDoc(collection(firebase.db, 'Consultations'), Consultation);
+
+		console.log('Consultation saved successfully:', newdoc.id);
+	} catch (err) {
+		console.error('Failed to save email to Firestore:', err);
+	}
+
+	return { messageId }; // e.g. { messageId: "..." }
 }

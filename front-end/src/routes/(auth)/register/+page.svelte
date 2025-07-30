@@ -1,51 +1,77 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { AppContext } from '$lib';
+	import firebase from '$lib/firebase';
+	import { redirect } from '@sveltejs/kit';
+	import { createUserWithEmailAndPassword } from 'firebase/auth';
 	import { getContext } from 'svelte';
 
 	// Component state
-	let isLogin = $state(false);
 	let email = $state('');
 	let password = $state('');
-	let confirmPassword = $state('');
-	let displayName = $state('');
+	let fullName = $state('');
 	let loading = $state(false);
 
-	const { isOnline, user, error }: AppContext = getContext('App');
+	const { error }: AppContext = getContext('App');
 
 	// Form validation
 	const emailValid = $derived(email.includes('@') && email.includes('.'));
 	const passwordValid = $derived(password.length >= 6);
-	const confirmPasswordValid = $derived(!isLogin ? password === confirmPassword : true);
-	const displayNameValid = $derived(isLogin || displayName.trim().length >= 2);
-	const formValid = $derived(
-		emailValid && passwordValid && confirmPasswordValid && displayNameValid
-	);
+	const fullNameValid = $derived(fullName.length > 0);
+	const formValid = $derived(emailValid && passwordValid && fullNameValid);
 </script>
 
 <div
 	class="relative container flex min-h-screen min-w-screen flex-col items-center justify-center p-4"
 >
-	<!-- Form di autenticazione -->
 	<div class="auth-card">
 		<div class="auth-header">
 			<h1>Registrati</h1>
 		</div>
 
-		<form class="auth-form" method="POST" action="?/register">
+		<form
+			class="auth-form"
+			method="POST"
+			action="?/register"
+			use:enhance={({ formData }) => {
+				loading = true;
+
+				// Add form data
+				formData.set('email', email);
+				formData.set('password', password);
+				formData.set('fullName', fullName);
+
+				return async ({ result, update }) => {
+					loading = false;
+
+					if (result.type === 'success') {
+						await update();
+					} else if (result.type === 'failure') {
+						// TODO: Handle FIREBASE ERROR
+						error.value = result.data?.code as string;
+						await update();
+					} else if (result.type === 'redirect') {
+						await createUserWithEmailAndPassword(firebase.auth, email, password);
+
+						redirect(303,result.location);
+					}
+				};
+			}}
+		>
 			<div class="form-group">
-				<label for="displayName">Nome completo</label>
+				<label for="fullName">Nome Completo</label>
 				<input
-					id="displayName"
+					id="fullName"
 					type="text"
-					bind:value={displayName}
-					placeholder="Inserisci il tuo nome"
+					bind:value={fullName}
+					placeholder="Inserisci Nome e Cognome"
 					class="form-input"
-					class:invalid={displayName && !displayNameValid}
-					autocomplete="name"
+					class:invalid={fullName && !fullNameValid}
+					required
 				/>
-				{#if displayName && !displayNameValid}
-					<span class="error-text">Il nome deve essere di almeno 2 caratteri</span>
+				{#if fullName && !fullNameValid}
+					<span class="error-text">Inserisci un Nome Completo valido</span>
 				{/if}
 			</div>
 
@@ -75,7 +101,7 @@
 					placeholder="Inserisci la tua password"
 					class="form-input"
 					class:invalid={password && !passwordValid}
-					autocomplete={isLogin ? 'current-password' : 'new-password'}
+					autocomplete={'new-password'}
 					required
 				/>
 				{#if password && !passwordValid}
@@ -84,16 +110,12 @@
 			</div>
 
 			{#if error.value.length > 0}
-				<div class="error-message">
+				<div class="error-message max-w-full text-clip">
 					{error.value}
 				</div>
 			{/if}
 
-			<button
-				type="submit"
-				class="btn btn-primary"
-				disabled={!formValid || loading || (!isOnline && !user.value)}
-			>
+			<button type="submit" class="btn btn-primary" disabled={!formValid}>
 				{#if loading}
 					<span class="loading-spinner"></span>
 					Creazione account...

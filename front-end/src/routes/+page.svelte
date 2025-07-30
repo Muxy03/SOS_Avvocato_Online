@@ -3,7 +3,7 @@
 	import type { AppContext } from '$lib';
 	import LoadingPage from '$lib/components/LoadingPage.svelte';
 	import firebase from '$lib/firebase';
-	import { clearUserDataLocally, getInitials } from '$lib/Locally';
+	import { clearUserSession, getInitials } from '$lib/Locally';
 	import { signOut } from 'firebase/auth';
 	import { getContext } from 'svelte';
 
@@ -14,13 +14,13 @@
 	async function handleSignOut() {
 		try {
 			await signOut(firebase.auth);
-			clearUserDataLocally();
+			clearUserSession();
 			user.value = null; // Direct assignment triggers reactivity
 		} catch (err) {
 			if (!isOnline) {
 				// Logout offline
 				user.value = null;
-				clearUserDataLocally();
+				clearUserSession();
 			} else {
 				error.value = 'Errore durante la disconnessione. Riprova.';
 			}

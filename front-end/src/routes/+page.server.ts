@@ -1,11 +1,8 @@
 import { redirect } from '@sveltejs/kit';
-import type { AppContext } from '$lib';
-import { getContext } from 'svelte';
+import type { PageServerLoad } from './$types';
 
-const { user }: AppContext = getContext('App');
-
-export function load() {
-	if (user.value == null) {
-		throw redirect(303, '/login');
+export const load: PageServerLoad = ({ cookies }) => {
+	if (!cookies.get('user_session')) {
+		throw redirect(303, '/register');
 	}
-}
+};
