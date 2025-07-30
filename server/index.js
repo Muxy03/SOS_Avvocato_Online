@@ -1,121 +1,8 @@
-import { r as render, L as LEGACY_PROPS, U as UNOWNED, E as ERROR_VALUE, C as COMMENT_NODE, H as HYDRATION_START, a as HYDRATION_ERROR, b as HYDRATION_END, S as STATE_SYMBOL, c as UNINITIALIZED, D as DERIVED, d as DIRTY, e as CLEAN, M as MAYBE_DIRTY, f as DISCONNECTED, I as INERT, g as EFFECT, A as ASYNC, B as BLOCK_EFFECT, h as BRANCH_EFFECT, R as ROOT_EFFECT, i as DESTROYED, j as USER_EFFECT, k as BROWSER, l as STALE_REACTION, m as REACTION_IS_UPDATING, n as EFFECT_RAN, o as EFFECT_PRESERVED, p as HEAD_EFFECT, q as BOUNDARY_EFFECT, s as EFFECT_TRANSPARENT, t as INSPECT_EFFECT, u as push$1, v as setContext, w as pop$1 } from './chunks/index-C75zWgGl.js';
-import { d as define_property, s as safe_equals, o as object_prototype, a as array_prototype, g as get_descriptor, i as is_extensible, b as array_from, c as deferred, e as equals, f as get_prototype_of, h as is_array, r as run_all, j as index_of, k as decode_pathname, l as decode_params, n as normalize_path, m as disable_search, v as validate_layout_server_exports, p as validate_layout_exports, q as validate_page_server_exports, t as validate_page_exports, u as resolve, w as make_trackable, x as readable, y as writable } from './chunks/exports-Cy4FWdYs.js';
-
-class HttpError {
-	/**
-	 * @param {number} status
-	 * @param {{message: string} extends App.Error ? (App.Error | string | undefined) : App.Error} body
-	 */
-	constructor(status, body) {
-		this.status = status;
-		if (typeof body === 'string') {
-			this.body = { message: body };
-		} else if (body) {
-			this.body = body;
-		} else {
-			this.body = { message: `Error: ${status}` };
-		}
-	}
-
-	toString() {
-		return JSON.stringify(this.body);
-	}
-}
-
-class Redirect {
-	/**
-	 * @param {300 | 301 | 302 | 303 | 304 | 305 | 306 | 307 | 308} status
-	 * @param {string} location
-	 */
-	constructor(status, location) {
-		this.status = status;
-		this.location = location;
-	}
-}
-
-/**
- * An error that was thrown from within the SvelteKit runtime that is not fatal and doesn't result in a 500, such as a 404.
- * `SvelteKitError` goes through `handleError`.
- * @extends Error
- */
-class SvelteKitError extends Error {
-	/**
-	 * @param {number} status
-	 * @param {string} text
-	 * @param {string} message
-	 */
-	constructor(status, text, message) {
-		super(message);
-		this.status = status;
-		this.text = text;
-	}
-}
-
-/**
- * @template {Record<string, unknown> | undefined} [T=undefined]
- */
-class ActionFailure {
-	/**
-	 * @param {number} status
-	 * @param {T} data
-	 */
-	constructor(status, data) {
-		this.status = status;
-		this.data = data;
-	}
-}
-
-/**
- * Create a JSON `Response` object from the supplied data.
- * @param {any} data The value that will be serialized as JSON.
- * @param {ResponseInit} [init] Options such as `status` and `headers` that will be added to the response. `Content-Type: application/json` and `Content-Length` headers will be added automatically.
- */
-function json(data, init) {
-	// TODO deprecate this in favour of `Response.json` when it's
-	// more widely supported
-	const body = JSON.stringify(data);
-
-	// we can't just do `text(JSON.stringify(data), init)` because
-	// it will set a default `content-type` header. duplicated code
-	// means less duplicated work
-	const headers = new Headers(init?.headers);
-	if (!headers.has('content-length')) {
-		headers.set('content-length', encoder$3.encode(body).byteLength.toString());
-	}
-
-	if (!headers.has('content-type')) {
-		headers.set('content-type', 'application/json');
-	}
-
-	return new Response(body, {
-		...init,
-		headers
-	});
-}
-
-const encoder$3 = new TextEncoder();
-
-/**
- * Create a `Response` object from the supplied body.
- * @param {string} body The value that will be used as-is.
- * @param {ResponseInit} [init] Options such as `status` and `headers` that will be added to the response. A `Content-Length` header will be added automatically.
- */
-function text(body, init) {
-	const headers = new Headers(init?.headers);
-	if (!headers.has('content-length')) {
-		const encoded = encoder$3.encode(body);
-		headers.set('content-length', encoded.byteLength.toString());
-		return new Response(encoded, {
-			...init,
-			headers
-		});
-	}
-
-	return new Response(body, {
-		...init,
-		headers
-	});
-}
+import { r as render, L as LEGACY_PROPS, U as UNOWNED, E as ERROR_VALUE, C as COMMENT_NODE, H as HYDRATION_START, a as HYDRATION_ERROR, b as HYDRATION_END, S as STATE_SYMBOL, c as UNINITIALIZED, D as DERIVED, d as DIRTY, e as CLEAN, M as MAYBE_DIRTY, f as DISCONNECTED, g as DEV, I as INERT, h as EFFECT, A as ASYNC, B as BLOCK_EFFECT, i as BRANCH_EFFECT, R as ROOT_EFFECT, j as DESTROYED, k as USER_EFFECT, l as STALE_REACTION, m as REACTION_IS_UPDATING, n as EFFECT_RAN, o as EFFECT_PRESERVED, p as HEAD_EFFECT, q as BOUNDARY_EFFECT, s as EFFECT_TRANSPARENT, t as INSPECT_EFFECT, u as push$1, v as setContext, w as pop$1 } from './chunks/index-CJFxRk-N.js';
+import { H as HttpError, j as json, t as text, R as Redirect, S as SvelteKitError, A as ActionFailure } from './chunks/index-DMcSsXGi.js';
+import { d as define_property, o as object_prototype, a as array_prototype, g as get_descriptor, i as is_extensible, b as array_from, c as get_prototype_of, e as is_array, f as deferred, r as run_all, h as index_of, j as decode_pathname, k as decode_params, n as normalize_path, l as disable_search, v as validate_layout_server_exports, m as validate_layout_exports, p as validate_page_server_exports, q as validate_page_exports, s as resolve, t as make_trackable } from './chunks/exports-BXJ_0DG8.js';
+import { s as safe_equals, e as equals, r as readable, w as writable } from './chunks/index2-kL9U-GfV.js';
+import { parse, serialize } from 'cookie';
 
 let base = "";
 let assets = base;
@@ -246,7 +133,8 @@ function invoke_error_boundary(error, effect) {
       try {
         effect.b.error(error);
         return;
-      } catch {
+      } catch (e) {
+        error = e;
       }
     }
     effect = effect.parent;
@@ -270,14 +158,14 @@ function apply_adjustments(error) {
 let micro_tasks = [];
 let idle_tasks = [];
 function run_micro_tasks() {
-  var tasks = micro_tasks;
+  var tasks2 = micro_tasks;
   micro_tasks = [];
-  run_all(tasks);
+  run_all(tasks2);
 }
 function run_idle_tasks() {
-  var tasks = idle_tasks;
+  var tasks2 = idle_tasks;
   idle_tasks = [];
-  run_all(tasks);
+  run_all(tasks2);
 }
 function flush_tasks() {
   if (micro_tasks.length > 0) {
@@ -332,7 +220,9 @@ function update_derived(derived) {
     derived.v = value;
     derived.wv = increment_write_version();
   }
-  if (is_destroying_effect) return;
+  if (is_destroying_effect) {
+    return;
+  }
   if (batch_deriveds !== null) {
     batch_deriveds.set(derived, derived.v);
   } else {
@@ -344,16 +234,28 @@ const batches = /* @__PURE__ */ new Set();
 let current_batch = null;
 let batch_deriveds = null;
 let effect_pending_updates = /* @__PURE__ */ new Set();
+let tasks = [];
+function dequeue() {
+  const task = (
+    /** @type {() => void} */
+    tasks.shift()
+  );
+  if (tasks.length > 0) {
+    queueMicrotask(dequeue);
+  }
+  task();
+}
 let queued_root_effects = [];
 let last_scheduled_effect = null;
 let is_flushing = false;
+let is_flushing_sync = false;
 class Batch {
   /**
    * The current values of any sources that are updated in this batch
    * They keys of this map are identical to `this.#previous`
    * @type {Map<Source, any>}
    */
-  #current = /* @__PURE__ */ new Map();
+  current = /* @__PURE__ */ new Map();
   /**
    * The values of any sources that are updated in this batch _before_ those updates took place.
    * They keys of this map are identical to `this.#current`
@@ -412,6 +314,16 @@ class Batch {
    */
   #block_effects = [];
   /**
+   * Deferred effects (which run after async work has completed) that are DIRTY
+   * @type {Effect[]}
+   */
+  #dirty_effects = [];
+  /**
+   * Deferred effects that are MAYBE_DIRTY
+   * @type {Effect[]}
+   */
+  #maybe_dirty_effects = [];
+  /**
    * A set of branches that still exist, but will be destroyed when this batch
    * is committed — we skip over these during `process`
    * @type {Set<Effect>}
@@ -421,13 +333,13 @@ class Batch {
    *
    * @param {Effect[]} root_effects
    */
-  #process(root_effects) {
+  process(root_effects) {
     queued_root_effects = [];
     var current_values = null;
     if (batches.size > 1) {
       current_values = /* @__PURE__ */ new Map();
       batch_deriveds = /* @__PURE__ */ new Map();
-      for (const [source2, current] of this.#current) {
+      for (const [source2, current] of this.current) {
         current_values.set(source2, { v: source2.v, wv: source2.wv });
         source2.v = current;
       }
@@ -445,19 +357,25 @@ class Batch {
       this.#traverse_effect_tree(root2);
     }
     if (this.#async_effects.length === 0 && this.#pending === 0) {
+      this.#commit();
       var render_effects = this.#render_effects;
       var effects = this.#effects;
       this.#render_effects = [];
       this.#effects = [];
       this.#block_effects = [];
-      this.#commit();
+      current_batch = null;
       flush_queued_effects(render_effects);
       flush_queued_effects(effects);
+      if (current_batch === null) {
+        current_batch = this;
+      } else {
+        batches.delete(this);
+      }
       this.#deferred?.resolve();
     } else {
-      for (const e of this.#render_effects) set_signal_status(e, CLEAN);
-      for (const e of this.#effects) set_signal_status(e, CLEAN);
-      for (const e of this.#block_effects) set_signal_status(e, CLEAN);
+      this.#defer_effects(this.#render_effects);
+      this.#defer_effects(this.#effects);
+      this.#defer_effects(this.#block_effects);
     }
     if (current_values) {
       for (const [source2, { v, wv }] of current_values) {
@@ -492,13 +410,13 @@ class Batch {
       if (!skip && effect.fn !== null) {
         if (is_branch) {
           effect.f ^= CLEAN;
-        } else if ((flags & EFFECT) !== 0) {
-          this.#effects.push(effect);
-        } else if (is_dirty(effect)) {
-          if ((flags & ASYNC) !== 0) {
+        } else if ((flags & CLEAN) === 0) {
+          if ((flags & EFFECT) !== 0) {
+            this.#effects.push(effect);
+          } else if ((flags & ASYNC) !== 0) {
             var effects = effect.b?.pending ? this.#boundary_async_effects : this.#async_effects;
             effects.push(effect);
-          } else {
+          } else if (is_dirty(effect)) {
             if ((effect.f & BLOCK_EFFECT) !== 0) this.#block_effects.push(effect);
             update_effect(effect);
           }
@@ -518,6 +436,17 @@ class Batch {
     }
   }
   /**
+   * @param {Effect[]} effects
+   */
+  #defer_effects(effects) {
+    for (const e of effects) {
+      const target = (e.f & DIRTY) !== 0 ? this.#dirty_effects : this.#maybe_dirty_effects;
+      target.push(e);
+      set_signal_status(e, CLEAN);
+    }
+    effects.length = 0;
+  }
+  /**
    * Associate a change to a given source with the current
    * batch, noting its previous and current values
    * @param {Source} source
@@ -527,7 +456,7 @@ class Batch {
     if (!this.#previous.has(source2)) {
       this.#previous.set(source2, value);
     }
-    this.#current.set(source2, source2.v);
+    this.current.set(source2, source2.v);
   }
   activate() {
     current_batch = this;
@@ -547,7 +476,7 @@ class Batch {
   }
   flush() {
     if (queued_root_effects.length > 0) {
-      this.flush_effects();
+      flush_effects();
     } else {
       this.#commit();
     }
@@ -558,25 +487,6 @@ class Batch {
       batches.delete(this);
     }
     this.deactivate();
-  }
-  flush_effects() {
-    var was_updating_effect = is_updating_effect;
-    is_flushing = true;
-    try {
-      var flush_count = 0;
-      set_is_updating_effect(true);
-      while (queued_root_effects.length > 0) {
-        if (flush_count++ > 1e3) {
-          infinite_loop_guard();
-        }
-        this.#process(queued_root_effects);
-        old_values.clear();
-      }
-    } finally {
-      is_flushing = false;
-      set_is_updating_effect(was_updating_effect);
-      last_scheduled_effect = null;
-    }
   }
   /**
    * Append and remove branches to/from the DOM
@@ -595,16 +505,12 @@ class Batch {
   decrement() {
     this.#pending -= 1;
     if (this.#pending === 0) {
-      for (const e of this.#render_effects) {
+      for (const e of this.#dirty_effects) {
         set_signal_status(e, DIRTY);
         schedule_effect(e);
       }
-      for (const e of this.#effects) {
-        set_signal_status(e, DIRTY);
-        schedule_effect(e);
-      }
-      for (const e of this.#block_effects) {
-        set_signal_status(e, DIRTY);
+      for (const e of this.#maybe_dirty_effects) {
+        set_signal_status(e, MAYBE_DIRTY);
         schedule_effect(e);
       }
       this.#render_effects = [];
@@ -621,12 +527,12 @@ class Batch {
   settled() {
     return (this.#deferred ??= deferred()).promise;
   }
-  static ensure(autoflush = true) {
+  static ensure() {
     if (current_batch === null) {
       const batch = current_batch = new Batch();
       batches.add(current_batch);
-      if (autoflush) {
-        queueMicrotask(() => {
+      if (!is_flushing_sync) {
+        Batch.enqueue(() => {
           if (current_batch !== batch) {
             return;
           }
@@ -636,62 +542,90 @@ class Batch {
     }
     return current_batch;
   }
+  /** @param {() => void} task */
+  static enqueue(task) {
+    if (tasks.length === 0) {
+      queueMicrotask(dequeue);
+    }
+    tasks.unshift(task);
+  }
 }
 function flushSync(fn) {
-  var result;
-  const batch = Batch.ensure(false);
-  while (true) {
-    flush_tasks();
-    if (queued_root_effects.length === 0) {
-      if (batch === current_batch) {
-        batch.flush();
+  var was_flushing_sync = is_flushing_sync;
+  is_flushing_sync = true;
+  try {
+    var result;
+    if (fn) ;
+    while (true) {
+      flush_tasks();
+      if (queued_root_effects.length === 0) {
+        current_batch?.flush();
+        if (queued_root_effects.length === 0) {
+          last_scheduled_effect = null;
+          return (
+            /** @type {T} */
+            result
+          );
+        }
       }
-      last_scheduled_effect = null;
-      return (
-        /** @type {T} */
-        result
-      );
+      flush_effects();
     }
-    batch.flush_effects();
+  } finally {
+    is_flushing_sync = was_flushing_sync;
+  }
+}
+function flush_effects() {
+  var was_updating_effect = is_updating_effect;
+  is_flushing = true;
+  try {
+    var flush_count = 0;
+    set_is_updating_effect(true);
+    while (queued_root_effects.length > 0) {
+      var batch = Batch.ensure();
+      if (flush_count++ > 1e3) {
+        var updates, entry;
+        if (DEV) ;
+        infinite_loop_guard();
+      }
+      batch.process(queued_root_effects);
+      old_values.clear();
+    }
+  } finally {
+    is_flushing = false;
+    set_is_updating_effect(was_updating_effect);
+    last_scheduled_effect = null;
   }
 }
 function infinite_loop_guard() {
   try {
     effect_update_depth_exceeded();
   } catch (error) {
-    if (last_scheduled_effect !== null) {
-      {
-        invoke_error_boundary(error, last_scheduled_effect);
-      }
-    } else {
-      throw error;
-    }
+    invoke_error_boundary(error, last_scheduled_effect);
   }
 }
 function flush_queued_effects(effects) {
   var length = effects.length;
   if (length === 0) return;
-  for (var i = 0; i < length; i++) {
-    var effect = effects[i];
-    if ((effect.f & (DESTROYED | INERT)) === 0) {
-      if (is_dirty(effect)) {
-        var wv = write_version;
-        update_effect(effect);
-        if (effect.deps === null && effect.first === null && effect.nodes_start === null) {
-          if (effect.teardown === null) {
-            unlink_effect(effect);
-          } else {
-            effect.fn = null;
-          }
+  var i = 0;
+  while (i < length) {
+    var effect = effects[i++];
+    if ((effect.f & (DESTROYED | INERT)) === 0 && is_dirty(effect)) {
+      var n = current_batch ? current_batch.current.size : 0;
+      update_effect(effect);
+      if (effect.deps === null && effect.first === null && effect.nodes_start === null) {
+        if (effect.teardown === null && effect.ac === null) {
+          unlink_effect(effect);
+        } else {
+          effect.fn = null;
         }
-        if (write_version > wv && (effect.f & USER_EFFECT) !== 0) {
-          break;
-        }
+      }
+      if (current_batch !== null && current_batch.current.size > n && (effect.f & USER_EFFECT) !== 0) {
+        break;
       }
     }
   }
-  for (; i < length; i += 1) {
-    schedule_effect(effects[i]);
+  while (i < length) {
+    schedule_effect(effects[i++]);
   }
 }
 function schedule_effect(signal) {
@@ -754,7 +688,7 @@ function internal_set(source2, value) {
       old_values.set(source2, old_value);
     }
     source2.v = value;
-    const batch = Batch.ensure();
+    var batch = Batch.ensure();
     batch.capture(source2, old_value);
     if ((source2.f & DERIVED) !== 0) {
       if ((source2.f & DIRTY) !== 0) {
@@ -787,21 +721,21 @@ function mark_reactions(signal, status) {
   for (var i = 0; i < length; i++) {
     var reaction = reactions[i];
     var flags = reaction.f;
-    if ((flags & DIRTY) !== 0) continue;
-    set_signal_status(reaction, status);
-    if ((flags & (CLEAN | UNOWNED)) !== 0) {
-      if ((flags & DERIVED) !== 0) {
-        mark_reactions(
-          /** @type {Derived} */
-          reaction,
-          MAYBE_DIRTY
-        );
-      } else {
-        schedule_effect(
-          /** @type {Effect} */
-          reaction
-        );
-      }
+    var not_dirty = (flags & DIRTY) === 0;
+    if (not_dirty) {
+      set_signal_status(reaction, status);
+    }
+    if ((flags & DERIVED) !== 0) {
+      mark_reactions(
+        /** @type {Derived} */
+        reaction,
+        MAYBE_DIRTY
+      );
+    } else if (not_dirty) {
+      schedule_effect(
+        /** @type {Effect} */
+        reaction
+      );
     }
   }
 }
@@ -1082,7 +1016,7 @@ function create_effect(type, fn, sync, push2 = true) {
     if (parent !== null) {
       push_effect(effect, parent);
     }
-    if (active_reaction !== null && (active_reaction.f & DERIVED) !== 0) {
+    if (active_reaction !== null && (active_reaction.f & DERIVED) !== 0 && (type & ROOT_EFFECT) === 0) {
       var derived = (
         /** @type {Derived} */
         active_reaction
@@ -1519,8 +1453,7 @@ function update_effect(effect) {
     effect.teardown = typeof teardown === "function" ? teardown : null;
     effect.wv = write_version;
     var dep;
-    if (BROWSER && tracing_mode_flag && (effect.f & DIRTY) !== 0 && effect.deps !== null) ;
-    if (BROWSER) ;
+    if (DEV && tracing_mode_flag && (effect.f & DIRTY) !== 0 && effect.deps !== null) ;
   } finally {
     is_updating_effect = was_updating_effect;
     active_effect = previous_effect;
@@ -1574,7 +1507,7 @@ function get(signal) {
       derived = /** @type {Derived} */
       signal;
       var value = derived.v;
-      if ((derived.f & CLEAN) !== 0 || depends_on_old_values(derived)) {
+      if ((derived.f & CLEAN) === 0 && derived.reactions !== null || depends_on_old_values(derived)) {
         value = execute_derived(derived);
       }
       old_values.set(derived, value);
@@ -1996,33 +1929,33 @@ function Root($$payload, $$props) {
   }
   const Pyramid_1 = constructors[1];
   if (constructors[1]) {
-    $$payload.out += "<!--[-->";
+    $$payload.out.push("<!--[-->");
     const Pyramid_0 = constructors[0];
-    $$payload.out += `<!---->`;
+    $$payload.out.push(`<!---->`);
     Pyramid_0($$payload, {
       data: data_0,
       form,
       params: page.params,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        Pyramid_1($$payload2, { data: data_1, form });
-        $$payload2.out += `<!---->`;
+        $$payload2.out.push(`<!---->`);
+        Pyramid_1($$payload2, { data: data_1, form, params: page.params });
+        $$payload2.out.push(`<!---->`);
       },
       $$slots: { default: true }
     });
-    $$payload.out += `<!---->`;
+    $$payload.out.push(`<!---->`);
   } else {
-    $$payload.out += "<!--[!-->";
+    $$payload.out.push("<!--[!-->");
     const Pyramid_0 = constructors[0];
-    $$payload.out += `<!---->`;
+    $$payload.out.push(`<!---->`);
     Pyramid_0($$payload, { data: data_0, form, params: page.params });
-    $$payload.out += `<!---->`;
+    $$payload.out.push(`<!---->`);
   }
-  $$payload.out += `<!--]--> `;
+  $$payload.out.push(`<!--]--> `);
   {
-    $$payload.out += "<!--[!-->";
+    $$payload.out.push("<!--[!-->");
   }
-  $$payload.out += `<!--]-->`;
+  $$payload.out.push(`<!--]-->`);
   pop$1();
 }
 const root = asClassComponent(Root);
@@ -2040,7 +1973,7 @@ const options = {
   root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.svg" />\n		<meta name="viewport" content="width=device-width, initial-scale=1" />\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="/favicon.ico" sizes="48x48" />\n		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />\n		<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />\n		<link rel="manifest" href="/manifest.json" />\n		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />\n		<meta name="theme-color" content="#667eea" />\n		<meta name="mobile-web-app-capable" content="yes" />\n		<meta name="apple-mobile-web-app-status-bar-style" content="default" />\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -2112,13 +2045,14 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1110a1j"
+  version_hash: "10u9jy2"
 };
 async function get_hooks() {
   let handle;
   let handleFetch;
   let handleError;
   let init;
+  ({ handle, handleFetch, handleError, init } = await import('./chunks/hooks.server-Bo2BbpPp.js'));
   let reroute;
   let transport;
   return {
@@ -2861,291 +2795,6 @@ function stringify_primitive(thing) {
 	return String(thing);
 }
 
-var cookie = {};
-
-/*!
- * cookie
- * Copyright(c) 2012-2014 Roman Shtylman
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-
-var hasRequiredCookie;
-
-function requireCookie () {
-	if (hasRequiredCookie) return cookie;
-	hasRequiredCookie = 1;
-
-	/**
-	 * Module exports.
-	 * @public
-	 */
-
-	cookie.parse = parse;
-	cookie.serialize = serialize;
-
-	/**
-	 * Module variables.
-	 * @private
-	 */
-
-	var __toString = Object.prototype.toString;
-
-	/**
-	 * RegExp to match field-content in RFC 7230 sec 3.2
-	 *
-	 * field-content = field-vchar [ 1*( SP / HTAB ) field-vchar ]
-	 * field-vchar   = VCHAR / obs-text
-	 * obs-text      = %x80-FF
-	 */
-
-	var fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
-
-	/**
-	 * Parse a cookie header.
-	 *
-	 * Parse the given cookie header string into an object
-	 * The object has the various cookies as keys(names) => values
-	 *
-	 * @param {string} str
-	 * @param {object} [options]
-	 * @return {object}
-	 * @public
-	 */
-
-	function parse(str, options) {
-	  if (typeof str !== 'string') {
-	    throw new TypeError('argument str must be a string');
-	  }
-
-	  var obj = {};
-	  var opt = options || {};
-	  var dec = opt.decode || decode;
-
-	  var index = 0;
-	  while (index < str.length) {
-	    var eqIdx = str.indexOf('=', index);
-
-	    // no more cookie pairs
-	    if (eqIdx === -1) {
-	      break
-	    }
-
-	    var endIdx = str.indexOf(';', index);
-
-	    if (endIdx === -1) {
-	      endIdx = str.length;
-	    } else if (endIdx < eqIdx) {
-	      // backtrack on prior semicolon
-	      index = str.lastIndexOf(';', eqIdx - 1) + 1;
-	      continue
-	    }
-
-	    var key = str.slice(index, eqIdx).trim();
-
-	    // only assign once
-	    if (undefined === obj[key]) {
-	      var val = str.slice(eqIdx + 1, endIdx).trim();
-
-	      // quoted values
-	      if (val.charCodeAt(0) === 0x22) {
-	        val = val.slice(1, -1);
-	      }
-
-	      obj[key] = tryDecode(val, dec);
-	    }
-
-	    index = endIdx + 1;
-	  }
-
-	  return obj;
-	}
-
-	/**
-	 * Serialize data into a cookie header.
-	 *
-	 * Serialize the a name value pair into a cookie string suitable for
-	 * http headers. An optional options object specified cookie parameters.
-	 *
-	 * serialize('foo', 'bar', { httpOnly: true })
-	 *   => "foo=bar; httpOnly"
-	 *
-	 * @param {string} name
-	 * @param {string} val
-	 * @param {object} [options]
-	 * @return {string}
-	 * @public
-	 */
-
-	function serialize(name, val, options) {
-	  var opt = options || {};
-	  var enc = opt.encode || encode;
-
-	  if (typeof enc !== 'function') {
-	    throw new TypeError('option encode is invalid');
-	  }
-
-	  if (!fieldContentRegExp.test(name)) {
-	    throw new TypeError('argument name is invalid');
-	  }
-
-	  var value = enc(val);
-
-	  if (value && !fieldContentRegExp.test(value)) {
-	    throw new TypeError('argument val is invalid');
-	  }
-
-	  var str = name + '=' + value;
-
-	  if (null != opt.maxAge) {
-	    var maxAge = opt.maxAge - 0;
-
-	    if (isNaN(maxAge) || !isFinite(maxAge)) {
-	      throw new TypeError('option maxAge is invalid')
-	    }
-
-	    str += '; Max-Age=' + Math.floor(maxAge);
-	  }
-
-	  if (opt.domain) {
-	    if (!fieldContentRegExp.test(opt.domain)) {
-	      throw new TypeError('option domain is invalid');
-	    }
-
-	    str += '; Domain=' + opt.domain;
-	  }
-
-	  if (opt.path) {
-	    if (!fieldContentRegExp.test(opt.path)) {
-	      throw new TypeError('option path is invalid');
-	    }
-
-	    str += '; Path=' + opt.path;
-	  }
-
-	  if (opt.expires) {
-	    var expires = opt.expires;
-
-	    if (!isDate(expires) || isNaN(expires.valueOf())) {
-	      throw new TypeError('option expires is invalid');
-	    }
-
-	    str += '; Expires=' + expires.toUTCString();
-	  }
-
-	  if (opt.httpOnly) {
-	    str += '; HttpOnly';
-	  }
-
-	  if (opt.secure) {
-	    str += '; Secure';
-	  }
-
-	  if (opt.partitioned) {
-	    str += '; Partitioned';
-	  }
-
-	  if (opt.priority) {
-	    var priority = typeof opt.priority === 'string'
-	      ? opt.priority.toLowerCase()
-	      : opt.priority;
-
-	    switch (priority) {
-	      case 'low':
-	        str += '; Priority=Low';
-	        break
-	      case 'medium':
-	        str += '; Priority=Medium';
-	        break
-	      case 'high':
-	        str += '; Priority=High';
-	        break
-	      default:
-	        throw new TypeError('option priority is invalid')
-	    }
-	  }
-
-	  if (opt.sameSite) {
-	    var sameSite = typeof opt.sameSite === 'string'
-	      ? opt.sameSite.toLowerCase() : opt.sameSite;
-
-	    switch (sameSite) {
-	      case true:
-	        str += '; SameSite=Strict';
-	        break;
-	      case 'lax':
-	        str += '; SameSite=Lax';
-	        break;
-	      case 'strict':
-	        str += '; SameSite=Strict';
-	        break;
-	      case 'none':
-	        str += '; SameSite=None';
-	        break;
-	      default:
-	        throw new TypeError('option sameSite is invalid');
-	    }
-	  }
-
-	  return str;
-	}
-
-	/**
-	 * URL-decode string value. Optimized to skip native call when no %.
-	 *
-	 * @param {string} str
-	 * @returns {string}
-	 */
-
-	function decode (str) {
-	  return str.indexOf('%') !== -1
-	    ? decodeURIComponent(str)
-	    : str
-	}
-
-	/**
-	 * URL-encode value.
-	 *
-	 * @param {string} val
-	 * @returns {string}
-	 */
-
-	function encode (val) {
-	  return encodeURIComponent(val)
-	}
-
-	/**
-	 * Determine if value is a Date.
-	 *
-	 * @param {*} val
-	 * @private
-	 */
-
-	function isDate (val) {
-	  return __toString.call(val) === '[object Date]' ||
-	    val instanceof Date
-	}
-
-	/**
-	 * Try decoding a string using a decoding function.
-	 *
-	 * @param {string} str
-	 * @param {function} decode
-	 * @private
-	 */
-
-	function tryDecode(str, decode) {
-	  try {
-	    return decode(str);
-	  } catch (e) {
-	    return str;
-	  }
-	}
-	return cookie;
-}
-
-var cookieExports = requireCookie();
-
 var setCookie = {exports: {}};
 
 var hasRequiredSetCookie;
@@ -3553,7 +3202,7 @@ function redirect_response(status, location) {
 }
 function clarify_devalue_error(event, error) {
   if (error.path) {
-    return `Data returned from \`load\` while rendering ${event.route.id} is not serializable: ${error.message} (${error.path})`;
+    return `Data returned from \`load\` while rendering ${event.route.id} is not serializable: ${error.message} (${error.path}). If you need to serialize/deserialize custom types, use transport hooks: https://svelte.dev/docs/kit/hooks#Universal-hooks-transport.`;
   }
   if (error.path === "") {
     return `Data returned from \`load\` while rendering ${event.route.id} is not a plain object`;
@@ -3965,20 +3614,20 @@ async function load_server_data({ event, state, node, parent }) {
       ...event,
       fetch: (info, init2) => {
         const url2 = new URL(info instanceof Request ? info.url : info, event.url);
-        if (BROWSER && done && !uses.dependencies.has(url2.href)) ;
+        if (DEV && done && !uses.dependencies.has(url2.href)) ;
         return event.fetch(info, init2);
       },
       /** @param {string[]} deps */
       depends: (...deps) => {
         for (const dep of deps) {
           const { href } = new URL(dep, event.url);
-          if (BROWSER) ;
+          if (DEV) ;
           uses.dependencies.add(href);
         }
       },
       params: new Proxy(event.params, {
         get: (target, key2) => {
-          if (BROWSER && done && typeof key2 === "string" && !uses.params.has(key2)) ;
+          if (DEV && done && typeof key2 === "string" && !uses.params.has(key2)) ;
           if (is_tracking) {
             uses.params.add(key2);
           }
@@ -3989,7 +3638,7 @@ async function load_server_data({ event, state, node, parent }) {
         }
       }),
       parent: async () => {
-        if (BROWSER && done && !uses.parent) ;
+        if (DEV && done && !uses.parent) ;
         if (is_tracking) {
           uses.parent = true;
         }
@@ -3997,7 +3646,7 @@ async function load_server_data({ event, state, node, parent }) {
       },
       route: new Proxy(event.route, {
         get: (target, key2) => {
-          if (BROWSER && done && typeof key2 === "string" && !uses.route) ;
+          if (DEV && done && typeof key2 === "string" && !uses.route) ;
           if (is_tracking) {
             uses.route = true;
           }
@@ -5630,7 +5279,7 @@ async function render_page(event, page, options2, manifest, state, nodes, resolv
     const ssr = nodes.ssr();
     const csr = nodes.csr();
     if (ssr === false && !(state.prerendering && should_prerender_data)) {
-      if (BROWSER && action_result && !event.request.headers.has("x-sveltekit-action")) ;
+      if (DEV && action_result && !event.request.headers.has("x-sveltekit-action")) ;
       return await render_response({
         branch: [],
         fetched,
@@ -5823,7 +5472,7 @@ function validate_options(options2) {
 }
 function get_cookies(request, url) {
   const header = request.headers.get("cookie") ?? "";
-  const initial_cookies = cookieExports.parse(header, { decode: (value) => value });
+  const initial_cookies = parse(header, { decode: (value) => value });
   let normalized_url;
   const new_cookies = {};
   const defaults = {
@@ -5845,7 +5494,7 @@ function get_cookies(request, url) {
       if (c && domain_matches(url.hostname, c.options.domain) && path_matches(url.pathname, c.options.path)) {
         return c.value;
       }
-      const req_cookies = cookieExports.parse(header, { decode: opts?.decode });
+      const req_cookies = parse(header, { decode: opts?.decode });
       const cookie = req_cookies[name];
       return cookie;
     },
@@ -5853,7 +5502,7 @@ function get_cookies(request, url) {
      * @param {import('cookie').CookieParseOptions} [opts]
      */
     getAll(opts) {
-      const cookies2 = cookieExports.parse(header, { decode: opts?.decode });
+      const cookies2 = parse(header, { decode: opts?.decode });
       for (const c of Object.values(new_cookies)) {
         if (domain_matches(url.hostname, c.options.domain) && path_matches(url.pathname, c.options.path)) {
           cookies2[c.name] = c.value;
@@ -5900,7 +5549,7 @@ function get_cookies(request, url) {
         }
         path = resolve(normalized_url, path);
       }
-      return cookieExports.serialize(name, value, { ...defaults, ...options2, path });
+      return serialize(name, value, { ...defaults, ...options2, path });
     }
   };
   function get_cookie_header(destination, header2) {
@@ -5916,7 +5565,7 @@ function get_cookies(request, url) {
       combined_cookies[cookie.name] = encoder2(cookie.value);
     }
     if (header2) {
-      const parsed = cookieExports.parse(header2, { decode: (value) => value });
+      const parsed = parse(header2, { decode: (value) => value });
       for (const name in parsed) {
         combined_cookies[name] = parsed[name];
       }
@@ -5956,10 +5605,10 @@ function path_matches(path, constraint) {
 function add_cookies_to_headers(headers2, cookies) {
   for (const new_cookie of cookies) {
     const { name, value, options: options2 } = new_cookie;
-    headers2.append("set-cookie", cookieExports.serialize(name, value, options2));
+    headers2.append("set-cookie", serialize(name, value, options2));
     if (options2.path.endsWith(".html")) {
       const path = add_data_suffix(options2.path);
-      headers2.append("set-cookie", cookieExports.serialize(name, value, { ...options2, path }));
+      headers2.append("set-cookie", serialize(name, value, { ...options2, path }));
     }
   }
 }
@@ -6283,12 +5932,12 @@ async function respond(request, options2, manifest, state) {
       if (url.pathname === base || url.pathname === base + "/") {
         trailing_slash = "always";
       } else if (page_nodes) {
-        if (BROWSER) ;
+        if (DEV) ;
         trailing_slash = page_nodes.trailing_slash();
       } else if (route.endpoint) {
         const node = await route.endpoint();
         trailing_slash = node.trailingSlash ?? "never";
-        if (BROWSER) ;
+        if (DEV) ;
       }
       if (!is_data_request) {
         const normalized = normalize_path(url.pathname, trailing_slash);
@@ -6509,7 +6158,7 @@ async function respond(request, options2, manifest, state) {
         });
       }
       if (state.depth === 0) {
-        if (BROWSER && event2.url.pathname === "/.well-known/appspecific/com.chrome.devtools.json") ;
+        if (DEV && event2.url.pathname === "/.well-known/appspecific/com.chrome.devtools.json") ;
         return await respond_with_error({
           event: event2,
           options: options2,
@@ -6571,10 +6220,7 @@ class Server {
     this.#manifest = manifest;
   }
   /**
-   * @param {{
-   *   env: Record<string, string>;
-   *   read?: (file: string) => ReadableStream;
-   * }} opts
+   * @param {import('@sveltejs/kit').ServerInitOptions} opts
    */
   async init({ env, read }) {
     const prefixes = {
@@ -6588,7 +6234,34 @@ class Server {
     );
     set_safe_public_env(public_env2);
     if (read) {
-      set_read_implementation(read);
+      const wrapped_read = (file) => {
+        const result = read(file);
+        if (result instanceof ReadableStream) {
+          return result;
+        } else {
+          return new ReadableStream({
+            async start(controller) {
+              try {
+                const stream = await Promise.resolve(result);
+                if (!stream) {
+                  controller.close();
+                  return;
+                }
+                const reader = stream.getReader();
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+                  controller.enqueue(value);
+                }
+                controller.close();
+              } catch (error) {
+                controller.error(error);
+              }
+            }
+          });
+        }
+      };
+      set_read_implementation(wrapped_read);
     }
     await (init_promise ??= (async () => {
       try {
