@@ -1,4 +1,4 @@
-import { r as render, L as LEGACY_PROPS, U as UNOWNED, E as ERROR_VALUE, C as COMMENT_NODE, H as HYDRATION_START, a as HYDRATION_ERROR, b as HYDRATION_END, S as STATE_SYMBOL, c as UNINITIALIZED, D as DERIVED, d as DIRTY, e as CLEAN, M as MAYBE_DIRTY, f as DISCONNECTED, g as DEV, I as INERT, h as EFFECT, A as ASYNC, B as BLOCK_EFFECT, i as BRANCH_EFFECT, R as ROOT_EFFECT, j as DESTROYED, k as USER_EFFECT, l as STALE_REACTION, m as REACTION_IS_UPDATING, n as EFFECT_RAN, o as EFFECT_PRESERVED, p as HEAD_EFFECT, q as BOUNDARY_EFFECT, s as EFFECT_TRANSPARENT, t as INSPECT_EFFECT, u as push$1, v as setContext, w as pop$1 } from './chunks/index-CJFxRk-N.js';
+import { r as render, L as LEGACY_PROPS, U as UNOWNED, E as ERROR_VALUE, C as COMMENT_NODE, H as HYDRATION_START, a as HYDRATION_ERROR, b as HYDRATION_END, S as STATE_SYMBOL, c as UNINITIALIZED, D as DERIVED, d as DIRTY, e as CLEAN, M as MAYBE_DIRTY, f as DISCONNECTED, g as DEV, I as INERT, h as EFFECT, A as ASYNC, B as BLOCK_EFFECT, i as BRANCH_EFFECT, R as ROOT_EFFECT, j as DESTROYED, k as USER_EFFECT, l as STALE_REACTION, m as REACTION_IS_UPDATING, n as EFFECT_RAN, o as EFFECT_PRESERVED, p as HEAD_EFFECT, q as BOUNDARY_EFFECT, s as EFFECT_TRANSPARENT, t as INSPECT_EFFECT, u as push$1, v as setContext, w as pop$1 } from './chunks/index-tKQS1tGf.js';
 import { H as HttpError, j as json, t as text, R as Redirect, S as SvelteKitError, A as ActionFailure } from './chunks/index-DMcSsXGi.js';
 import { d as define_property, o as object_prototype, a as array_prototype, g as get_descriptor, i as is_extensible, b as array_from, c as get_prototype_of, e as is_array, f as deferred, r as run_all, h as index_of, j as decode_pathname, k as decode_params, n as normalize_path, l as disable_search, v as validate_layout_server_exports, m as validate_layout_exports, p as validate_page_server_exports, q as validate_page_exports, s as resolve, t as make_trackable } from './chunks/exports-BXJ_0DG8.js';
 import { s as safe_equals, e as equals, r as readable, w as writable } from './chunks/index2-kL9U-GfV.js';
@@ -1919,7 +1919,8 @@ function Root($$payload, $$props) {
     components = [],
     form,
     data_0 = null,
-    data_1 = null
+    data_1 = null,
+    data_2 = null
   } = $$props;
   {
     setContext("__svelte__", stores);
@@ -1927,7 +1928,7 @@ function Root($$payload, $$props) {
   {
     stores.page.set(page);
   }
-  const Pyramid_1 = constructors[1];
+  const Pyramid_2 = constructors[2];
   if (constructors[1]) {
     $$payload.out.push("<!--[-->");
     const Pyramid_0 = constructors[0];
@@ -1937,9 +1938,30 @@ function Root($$payload, $$props) {
       form,
       params: page.params,
       children: ($$payload2) => {
-        $$payload2.out.push(`<!---->`);
-        Pyramid_1($$payload2, { data: data_1, form, params: page.params });
-        $$payload2.out.push(`<!---->`);
+        if (constructors[2]) {
+          $$payload2.out.push("<!--[-->");
+          const Pyramid_1 = constructors[1];
+          $$payload2.out.push(`<!---->`);
+          Pyramid_1($$payload2, {
+            data: data_1,
+            form,
+            params: page.params,
+            children: ($$payload3) => {
+              $$payload3.out.push(`<!---->`);
+              Pyramid_2($$payload3, { data: data_2, form, params: page.params });
+              $$payload3.out.push(`<!---->`);
+            },
+            $$slots: { default: true }
+          });
+          $$payload2.out.push(`<!---->`);
+        } else {
+          $$payload2.out.push("<!--[!-->");
+          const Pyramid_1 = constructors[1];
+          $$payload2.out.push(`<!---->`);
+          Pyramid_1($$payload2, { data: data_1, form, params: page.params });
+          $$payload2.out.push(`<!---->`);
+        }
+        $$payload2.out.push(`<!--]-->`);
       },
       $$slots: { default: true }
     });
@@ -2045,14 +2067,13 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "10u9jy2"
+  version_hash: "19pi5tk"
 };
 async function get_hooks() {
   let handle;
   let handleFetch;
   let handleError;
   let init;
-  ({ handle, handleFetch, handleError, init } = await import('./chunks/hooks.server-Bo2BbpPp.js'));
   let reroute;
   let transport;
   return {
