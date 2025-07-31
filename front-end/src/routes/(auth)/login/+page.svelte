@@ -1,10 +1,10 @@
 <script lang="ts">
 	import firebase from '$lib/firebase';
-	import { signInWithEmailAndPassword } from 'firebase/auth';
+	import { signInWithEmailAndPassword, type User } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
-	import type { AppContext } from '$lib';
-	import { getContext } from 'svelte';
+	import type { AppContext, UserData } from '$lib';
+	import { getContext, onMount } from 'svelte';
 
 	// Component state
 	let email = $state('');
@@ -15,15 +15,22 @@
 	const emailValid = $derived(email.includes('@') && email.includes('.'));
 	const passwordValid = $derived(password.length >= 6);
 	const formValid = $derived(emailValid && passwordValid);
-
-	let { RememberMe, user, error }: AppContext = getContext('App');
+	let error: { value: string } | undefined = $state(undefined);
+	let user: { value: UserData | undefined } | undefined = $state(undefined);
+	let RememberMe: { value: boolean } | undefined = $state(undefined);
+	onMount(() => {
+		const App: AppContext = getContext('App');
+		RememberMe = { ...App.RememberMe };
+		user = { ...App.user };
+		error = { ...App.error };
+	});
 </script>
 
 <div
 	class="relative container flex min-h-screen min-w-screen flex-col items-center justify-center p-4"
 >
 	<!-- Form di autenticazione -->
-	<div class="auth-card">
+	<div class="auth-card flex flex-col items-center justify-center gap-3">
 		<div class="auth-header">
 			<h1>Accedi</h1>
 		</div>
@@ -47,7 +54,8 @@
 						await update();
 					} else if (result.type === 'failure') {
 						// TODO: HANDLE FIREBASE ERROR
-						error.value = result.data?.error as string;
+						//error.value = result.data?.error as string;
+						console.log('ERRORE');
 						await update();
 					} else if (result.type === 'redirect') {
 						await signInWithEmailAndPassword(firebase.auth, email, password);
@@ -62,7 +70,9 @@
 					id="email"
 					type="email"
 					bind:value={email}
-					placeholder={user.value === null ? 'Inserisci la tua email' : user.value.email}
+					placeholder={user === undefined || user.value === undefined
+						? 'Inserisci la tua email'
+						: user.value?.email}
 					class="form-input"
 					class:invalid={email && !emailValid}
 					autocomplete="email"
@@ -92,15 +102,16 @@
 
 			<div class="form-options">
 				<label class="checkbox-label">
-					<input type="checkbox" bind:checked={RememberMe.value} class="checkbox" />
+					<input type="checkbox" class="checkbox" />
+					<!-- bind:checked={RememberMe?.value} -->
 					<span class="checkmark"></span>
 					Ricordami
 				</label>
 			</div>
 
-			{#if error.value.length > 0}
+			{#if error !== undefined && error.value !== undefined && error.value.length > 0}
 				<div class="error-message">
-					{error.value}
+					{error?.value}
 				</div>
 			{/if}
 
@@ -114,12 +125,13 @@
 			</button>
 		</form>
 
-		<div class="auth-switch">
+		<div class="w-full auth-switch flex flex-col items-center justify-center gap-2">
+			<div class="w-full border-t border-gray-600"></div>
 			<p>
 				Non hai un account?
-				<button type="button" class="link-btn" onclick={() => goto('/register')}>
-					Registrati
-				</button>
+				<a href="/register">
+					<button type="button" class="link-btn"> Registrati </button>
+				</a>
 			</p>
 		</div>
 	</div>

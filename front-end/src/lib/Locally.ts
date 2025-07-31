@@ -1,5 +1,6 @@
 // import { serverTimestamp } from 'firebase/firestore';
-import { type User } from 'firebase/auth';
+//import type { UserData } from '$lib';
+import type { User } from 'firebase/auth';
 
 export function getInitials(name: string, email: string) {
 	if (name && name.trim()) {
@@ -15,13 +16,22 @@ export function getInitials(name: string, email: string) {
 }
 
 export async function storeUserSession(userInfo: User) {
-	await fetch('/api/session', {
-		method: 'POST',
-		credentials: 'same-origin',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(userInfo)
-	});
-	// Optionally redirect or update UI after login
+	const cookie = await getUserSession();
+
+	if (cookie) {
+		for (const key in userInfo) {
+			if (Object.keys(cookie).includes(key)) {
+				cookie[key] = userInfo[key as keyof User];
+			}
+		}
+
+		await fetch('/api/session', {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(cookie)
+		});
+	}
 }
 
 export async function clearUserSession() {
@@ -37,10 +47,12 @@ export async function getUserSession() {
 		method: 'GET',
 		credentials: 'same-origin'
 	});
-	if (response.ok) {
+
+	if (response.status === 200) {
 		const userSession = await response.json();
-		return userSession ? JSON.parse(userSession) : null;
+		return userSession;
 	}
+
 	return null;
 }
 

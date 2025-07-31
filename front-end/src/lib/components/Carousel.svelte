@@ -17,22 +17,26 @@
 <div
 	class="relative flex w-full max-w-3xl flex-col items-center justify-center gap-3 overflow-hidden"
 >
-	{#each data as Consultation[] as cons, i}
-		<div
-			class="flex w-full flex-shrink-0 items-center justify-center"
-			class:hidden={currentIndex !== i}
-		>
-			<button onclick={next} ondblclick={prev}>
-				<div
-					class="flex h-64 w-[250px] flex-col items-center justify-center gap-4 rounded-xl border-2 bg-white text-xl text-clip"
-				>
-					{cons.email.sender.name}
-					{cons.email.sender.email}
-					{cons.status}
-				</div>
-			</button>
-		</div>
-	{/each}
+	{#if data.length > 0}
+		{#each data as Consultation[] as cons, i}
+			<div
+				class="flex w-full flex-shrink-0 items-center justify-center"
+				class:hidden={currentIndex !== i}
+			>
+				<button onclick={next} ondblclick={prev}>
+					<div
+						class="flex h-64 w-[250px] flex-col items-center justify-center gap-4 rounded-xl border-2 bg-white text-xl text-clip"
+					>
+						{cons.email.sender.name}
+						{cons.email.sender.email}
+						{cons.status}
+					</div>
+				</button>
+			</div>
+		{/each}
 
-	<p>{currentIndex + 1}/{data.length}</p>
+		<p>{currentIndex + 1}/{data.length}</p>
+		{:else}
+		<p>No Consultation for this Account</p>
+	{/if}
 </div>

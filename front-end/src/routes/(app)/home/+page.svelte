@@ -1,6 +1,28 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Navbar from '$lib/components/Navbar.svelte';
+	import { onMount } from 'svelte';
+
+	let user = $state(undefined);
+
+	async function setUser() {
+		const user_session = await fetch('/api/session', {
+			method: 'GET',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json' }
+		});
+
+		if (user_session.ok) {
+			user = await user_session.json();
+		}
+	}
+
+	onMount(() => {
+		setUser();
+	});
 </script>
+
+<Navbar {user} />
 
 <div class="container">
 	<!-- First Clickable DIV -->
@@ -36,14 +58,10 @@
 
 <style>
 	.container {
-		min-height: 100vh;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 20px;
 		gap: 30px;
-		flex-direction: row;
 	}
 
 	.clickable-div {

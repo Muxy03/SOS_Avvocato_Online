@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		maxAge: 60 * 60 * 24 * 7 // 7 days
 	});
 
-	return new Response(null, { status: 204 });
+	return new Response(null, { status: 200 });
 };
 
 export const GET: RequestHandler = async ({ cookies }) => {
@@ -30,5 +30,5 @@ export const DELETE: RequestHandler = async ({ cookies }) => {
 		sameSite: 'lax',
 		maxAge: 0
 	});
-	return new Response(null, { status: 204 });
+	return new Response(null, { status: 200 });
 };

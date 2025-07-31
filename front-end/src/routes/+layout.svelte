@@ -15,9 +15,30 @@
 
 	const isOnline = $state({ value: true });
 	const rememberMe = $state({ value: true });
-	let user: { value: User | null } = $state({ value: null });
+	let user: { value: User | undefined } = $state({ value: undefined });
 	const error = $state({ value: '' });
 	const isLoading = $state({ value: navigating.complete !== null });
+
+	async function setUser() {
+		const response = await fetch('/api/session', {
+			method: 'GET',
+			credentials: 'same-origin'
+		});
+
+		if (response.status === 200) {
+			const userSession = await response.json();
+		}
+
+		// if (session) {
+		// 	user.value = session;
+		// } else {
+		// 	user.value = undefined;
+		// }
+	}
+
+	function updateOnlineStatus() {
+		isOnline.value = navigator.onLine;
+	}
 
 	setContext('App', {
 		isOnline,
@@ -26,10 +47,6 @@
 		user,
 		error
 	});
-
-	function updateOnlineStatus() {
-		isOnline.value = navigator.onLine;
-	}
 
 	onMount(() => {
 		if ('serviceWorker' in navigator) {
@@ -49,25 +66,16 @@
 			if (authUser) {
 				user.value = authUser;
 				storeUserSession(authUser);
-			} else {
-				clearUserSession();
-			}
+			}// } else {
+			// 	clearUserSession();
+			// }
 		});
 
 		updateOnlineStatus();
 		window.addEventListener('online', updateOnlineStatus);
 		window.addEventListener('offline', updateOnlineStatus);
 
-		if (!isOnline) {
-			async () => {
-				const session = await getUserSession();
-				if (session) {
-					user.value = session;
-				} else {
-					user.value = null;
-				}
-			};
-		}
+		setUser();
 
 		return () => {
 			unsubscribe();
@@ -91,6 +99,10 @@
 	});
 </script>
 
-<div class="flex min-h-screen min-w-screen flex-col items-center justify-center bg-blue-900">
-	{@render children()}
+<div class="flex h-screen w-screen flex-col gap-5">
+	<main class="flex-1 bg-blue-900">
+		<div class="flex h-full w-full items-center justify-center">
+			{@render children()}
+		</div>
+	</main>
 </div>

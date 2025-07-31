@@ -128,13 +128,12 @@
 /* Responsive design */
 @media (max-width: 480px) {
 	.auth-card {
-		padding: 1.5rem;
 		border-radius: 16px;
 	}
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
 	.auth-card {
 		background: #1f2937;
 		color: #f9fafb;
@@ -155,7 +154,7 @@
 	.display-name {
 		color: #f9fafb;
 	}
-}
+} */
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
@@ -173,19 +172,14 @@
 	}
 }
 
-.container {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
 .auth-card {
 	background: white;
 	border-radius: 20px;
 	box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-	padding: 2rem;
+	/* padding: 2rem; */
 	width: 100%;
-	max-width: 400px;
+	max-width: 300px;
 	animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-	margin: 0 auto;
 }
 
 @keyframes slideUp {
@@ -375,15 +369,11 @@
 
 .auth-switch {
 	text-align: center;
-	margin-top: 2rem;
-	padding-top: 1.5rem;
-	border-top: 1px solid #e5e7eb;
 }
 
 .auth-switch p {
 	color: #6b7280;
 	font-size: 0.875rem;
-	margin: 0;
 }
 
 .link-btn {
@@ -407,7 +397,7 @@
 	}
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
 	.auth-card {
 		background: #1f2937;
 		color: #f9fafb;
@@ -428,7 +418,7 @@
 		border-color: #667eea;
 		background: #4b5563;
 	}
-}
+} */
 
 @media (max-width: 480px) {
 	.container {

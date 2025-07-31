@@ -98,19 +98,19 @@
 <div class="flex min-h-screen items-center justify-center">
 	<div class="flex h-[600px] w-[300px] flex-col items-center justify-center">
 		<div
-			class="flex flex-col items-center justify-around overflow-hidden rounded-lg bg-white shadow-lg"
+			class="flex w-full flex-col items-center justify-around gap-5 overflow-hidden rounded-lg bg-white shadow-lg"
 		>
 			<!-- Header -->
-			<div
-				class="flex flex-col items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600"
-			>
-				<h1 class="text-2xl font-bold text-white">Send Email</h1>
-				<p class=" text-center text-blue-100">Compose and send your message with attachments</p>
+			<div class="flex flex-col items-center justify-center gap-1 bg-white">
+				<h1 class="text-2xl font-bold text-blue-600">Send Email</h1>
+				<div class="w-full border-t border-t-blue-600"></div>
+				<p class=" text-center text-blue-500">Compose and send your message with attachments</p>
+				<div class="w-full border-t border-t-blue-600"></div>
 			</div>
 
 			<!-- Form -->
 			<form
-				class="flex flex-col"
+				class="flex flex-col items-center gap-1"
 				method="POST"
 				action="?/sendEmail"
 				use:enhance={({ formData }) => {
@@ -222,7 +222,7 @@
 				</div>
 
 				<!-- Attachments section -->
-				<div>
+				<div class="flex flex-col items-center gap-2">
 					<label for="files" class="mb-2 block text-sm font-medium text-gray-700">Attachments</label
 					>
 
@@ -237,11 +237,11 @@
 
 					<!-- Attachment list -->
 					{#if attachments.length > 0}
-						<div class="mt-4 space-y-2">
+						<div class="space-y-2">
 							{#each attachments as attachment}
-								<div class="file-item flex items-center justify-between rounded-lg bg-gray-50 p-3">
-									<div class="flex items-center space-x-3">
-										<span class="text-2xl">{getFileIcon(attachment.name)}</span>
+								<div class="file-item flex items-center justify-between rounded-lg bg-gray-50">
+									<div class="flex items-center justify-center gap-1">
+										<!-- <span class="text-md">{getFileIcon(attachment.name)}</span> -->
 										<div>
 											<p class="font-medium text-gray-900">{attachment.name}</p>
 											<p class="text-sm text-gray-500">{formatFileSize(attachment.size)}</p>
@@ -258,16 +258,14 @@
 							{/each}
 						</div>
 					{/if}
-				</div>
 
-				<!-- Submit section -->
-				<div
-					class="flex flex-col items-center justify-between space-y-3 border-t border-gray-200 pt-6 sm:flex-row sm:space-y-0"
-				>
 					<div class="text-sm text-gray-500">
 						{attachments.length} file(s) attached
 					</div>
+				</div>
 
+				<!-- Submit section -->
+				<div class="flex flex-col items-center justify-between ">
 					<div class="flex gap-3">
 						<button
 							type="button"
@@ -280,7 +278,7 @@
 						<button
 							type="submit"
 							disabled={isSubmitting}
-							class="transform rounded-md bg-gradient-to-r from-blue-600 to-purple-600 font-medium text-white transition-all hover:scale-105 hover:from-blue-700 hover:to-purple-700 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
+							class="h-[30px] w-[100px] transform rounded-md bg-blue-600 font-medium text-white transition-all hover:scale-105 hover:from-blue-700 hover:to-purple-700 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							{isSubmitting ? 'Sending...' : 'Send Email'}
 						</button>

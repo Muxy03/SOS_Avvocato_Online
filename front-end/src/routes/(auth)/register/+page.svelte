@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import type { AppContext } from '$lib';
 	import firebase from '$lib/firebase';
 	import { redirect } from '@sveltejs/kit';
-	import { createUserWithEmailAndPassword } from 'firebase/auth';
-	import { getContext } from 'svelte';
+	import { createUserWithEmailAndPassword, type User } from 'firebase/auth';
+	import { getContext, onMount, setContext } from 'svelte';
 
 	// Component state
 	let email = $state('');
@@ -13,19 +12,45 @@
 	let fullName = $state('');
 	let loading = $state(false);
 
-	const { error }: AppContext = getContext('App');
-
 	// Form validation
 	const emailValid = $derived(email.includes('@') && email.includes('.'));
 	const passwordValid = $derived(password.length >= 6);
 	const fullNameValid = $derived(fullName.length > 0);
 	const formValid = $derived(emailValid && passwordValid && fullNameValid);
+
+	let error: { value: string } | undefined = $state(undefined);
+	let user: { value: User | undefined } | undefined = $state(undefined);
+	let RememberMe: { value: boolean } | undefined = $state(undefined);
+
+	onMount(() => {
+		const App: AppContext = getContext('App');
+		RememberMe = { ...App.RememberMe };
+		user = { ...App.user };
+		error = { ...App.error };
+	});
+
+	$effect(() => {
+		let tmp: AppContext = getContext('App');
+		if (user) {
+			tmp.user = user;
+		}
+
+		if (error) {
+			tmp.error = error;
+		}
+
+		if (RememberMe) {
+			tmp.RememberMe = RememberMe;
+		}
+
+		setContext('App', tmp);
+	});
 </script>
 
 <div
-	class="relative container flex min-h-screen min-w-screen flex-col items-center justify-center p-4"
+	class="relative container flex flex-col items-center justify-center"
 >
-	<div class="auth-card">
+	<div class="auth-card flex flex-col items-center justify-center gap-3">
 		<div class="auth-header">
 			<h1>Registrati</h1>
 		</div>
@@ -49,12 +74,14 @@
 						await update();
 					} else if (result.type === 'failure') {
 						// TODO: Handle FIREBASE ERROR
-						error.value = result.data?.code as string;
+						if (error !== undefined && error.value !== undefined) {
+							error.value = result.data?.code as string;
+						}
 						await update();
 					} else if (result.type === 'redirect') {
 						await createUserWithEmailAndPassword(firebase.auth, email, password);
 
-						redirect(303,result.location);
+						redirect(303, result.location);
 					}
 				};
 			}}
@@ -109,7 +136,7 @@
 				{/if}
 			</div>
 
-			{#if error.value.length > 0}
+			{#if error !== undefined && error.value !== undefined && error.value.length > 0}
 				<div class="error-message max-w-full text-clip">
 					{error.value}
 				</div>
@@ -125,10 +152,14 @@
 			</button>
 		</form>
 
-		<div class="auth-switch">
+		<div class="w-full auth-switch flex flex-col items-center justify-center gap-2">
+
+			<div class="w-full border-t border-gray-600"></div>
 			<p>
 				Hai già un account?
-				<button type="button" class="link-btn" onclick={() => goto('/login')}> Accedi </button>
+				<a href="/login">
+					<button type="button" class="link-btn"> Accedi </button>
+				</a>
 			</p>
 		</div>
 	</div>

@@ -1,15 +1,23 @@
 import { doc, getDoc } from 'firebase/firestore';
 import type { PageLoad } from './$types';
 import firebase from '$lib/firebase';
-import { error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
-export const load: PageLoad = ({ params }) => {
+export const load: PageLoad = ({ fetch, params }) => {
 	return (async () => {
 		const user = (await getDoc(doc(firebase.db, `/Users/${params.id}`))).data();
 
 		if (!user) {
-			error(404, 'user not found');
+			await fetch('/api/session', {
+				method: 'DELETE',
+				credentials: 'same-origin',
+				headers: { 'Content-Type': 'application/json' },
+				body: ''
+			});
+
+			throw redirect(307, '/register');
 		}
+
 		return {
 			user
 		};
