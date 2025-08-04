@@ -1,7 +1,7 @@
-import { r as render, L as LEGACY_PROPS, U as UNOWNED, E as ERROR_VALUE, C as COMMENT_NODE, H as HYDRATION_START, a as HYDRATION_ERROR, b as HYDRATION_END, S as STATE_SYMBOL, c as UNINITIALIZED, D as DERIVED, d as DIRTY, e as CLEAN, M as MAYBE_DIRTY, f as DISCONNECTED, g as DEV, I as INERT, h as EFFECT, A as ASYNC, B as BLOCK_EFFECT, i as BRANCH_EFFECT, R as ROOT_EFFECT, j as DESTROYED, k as USER_EFFECT, l as STALE_REACTION, m as REACTION_IS_UPDATING, n as EFFECT_RAN, o as EFFECT_PRESERVED, p as HEAD_EFFECT, q as BOUNDARY_EFFECT, s as EFFECT_TRANSPARENT, t as INSPECT_EFFECT, u as push$1, v as setContext, w as pop$1 } from './chunks/index-tKQS1tGf.js';
+import { r as render, L as LEGACY_PROPS, d as define_property, U as UNOWNED, E as ERROR_VALUE, C as COMMENT_NODE, H as HYDRATION_START, a as HYDRATION_ERROR, b as HYDRATION_END, S as STATE_SYMBOL, o as object_prototype, c as array_prototype, e as UNINITIALIZED, g as get_descriptor, D as DERIVED, f as DIRTY, h as CLEAN, M as MAYBE_DIRTY, i as DISCONNECTED, j as is_extensible, k as array_from, l as DEV, m as get_prototype_of, n as is_array, I as INERT, p as EFFECT, A as ASYNC, B as BLOCK_EFFECT, q as deferred, s as run_all, t as BRANCH_EFFECT, R as ROOT_EFFECT, u as DESTROYED, v as USER_EFFECT, w as STALE_REACTION, x as REACTION_IS_UPDATING, y as EFFECT_RAN, z as EFFECT_PRESERVED, F as HEAD_EFFECT, G as BOUNDARY_EFFECT, J as EFFECT_TRANSPARENT, K as index_of, N as INSPECT_EFFECT, O as push$1, P as setContext, Q as pop$1 } from './chunks/index-Q41OkFP-.js';
 import { H as HttpError, j as json, t as text, R as Redirect, S as SvelteKitError, A as ActionFailure } from './chunks/index-DMcSsXGi.js';
-import { d as define_property, o as object_prototype, a as array_prototype, g as get_descriptor, i as is_extensible, b as array_from, c as get_prototype_of, e as is_array, f as deferred, r as run_all, h as index_of, j as decode_pathname, k as decode_params, n as normalize_path, l as disable_search, v as validate_layout_server_exports, m as validate_layout_exports, p as validate_page_server_exports, q as validate_page_exports, s as resolve, t as make_trackable } from './chunks/exports-BXJ_0DG8.js';
-import { s as safe_equals, e as equals, r as readable, w as writable } from './chunks/index2-kL9U-GfV.js';
+import { s as safe_equals, e as equals, r as readable, w as writable } from './chunks/index2-fOYOpeUp.js';
+import { d as decode_pathname, a as decode_params, n as normalize_path, b as disable_search, v as validate_layout_server_exports, c as validate_layout_exports, e as validate_page_server_exports, f as validate_page_exports, r as resolve, m as make_trackable } from './chunks/exports-Cv9LZeD1.js';
 import { parse, serialize } from 'cookie';
 
 let base = "";
@@ -1995,7 +1995,7 @@ const options = {
   root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="/favicon.ico" sizes="48x48" />\n		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />\n		<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />\n		<link rel="manifest" href="/manifest.json" />\n		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />\n		<meta name="theme-color" content="#667eea" />\n		<meta name="mobile-web-app-capable" content="yes" />\n		<meta name="apple-mobile-web-app-status-bar-style" content="default" />\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="/favicon.ico" sizes="48x48" />\n		<link rel="icon" href="/LOGO.jpeg" sizes="any" type="image/jpeg" />\n		<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />\n		<link rel="manifest" href="/manifest.json" />\n		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />\n		<meta name="theme-color" content="#667eea" />\n		<meta name="mobile-web-app-capable" content="yes" />\n		<meta name="apple-mobile-web-app-status-bar-style" content="default" />\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -2067,7 +2067,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "19pi5tk"
+  version_hash: "29b69q"
 };
 async function get_hooks() {
   let handle;
