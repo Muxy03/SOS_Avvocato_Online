@@ -1,34 +1,27 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { Lang, Online } from '$lib/shared.svelte';
+	import logo from '$lib/assets/LOGO.jpeg';
 	import { onMount } from 'svelte';
+	import Modal from './Modal.svelte';
 
 	// Svelte 5 runes and syntax
 	let { user = $bindable(undefined) } = $props();
 
-	let title = $state('SOS Avvocato Online');
-	let logoSrc = $state('/logo.svg');
-	let currentLang = $state('ENG');
+	const title = 'S.O.S Avvocato Online';
+	let isHover = $state(false);
+	let showModal = $state(false);
 	let isLoggedIn = $state(false);
 	let showHelp = $state(false);
-	let User = $derived(user);
 
 	// Popup states using runes
 	let showHelpPopup = $state(false);
 	let showProfilePopup = $state(false);
 	let showLangPopup = $state(false);
 
-	let isOnline = $state(true);
+	//let isOnline = $state(true);
 
 	function updateOnlineStatus() {
-		isOnline = navigator.onLine;
-	}
-
-	// Functions
-	function toggleHelp() {
-		showHelpPopup = !showHelpPopup;
-		showProfilePopup = false;
-		showLangPopup = false;
-		setTimeout(() => (showHelpPopup = false), 3 * 1000);
+		Online.value = navigator.onLine;
 	}
 
 	async function handleProfile() {
@@ -47,20 +40,13 @@
 				showHelpPopup = false;
 				showLangPopup = false;
 			} else {
-				goto('/about/' + user.DocId);
+				window.location.href = '/about/' + user.DocId;
 			}
 		}
 	}
 
 	function toggleLang() {
-		if (currentLang === 'ENG' || currentLang === 'ITA') {
-			const newLang = currentLang === 'ENG' ? 'ITA' : 'ENG';
-			currentLang = newLang;
-		} else {
-			showLangPopup = true;
-			showHelpPopup = false;
-			showProfilePopup = false;
-		}
+		Lang.value = Lang.value === 'ENG' ? 'ITA' : 'ENG';
 	}
 
 	onMount(() => {
@@ -71,40 +57,33 @@
 </script>
 
 <!-- Navbar Container -->
-<div class="fixed top-0 right-0 left-0 z-50 h-15 " role="presentation">
-	<nav class="flex h-full items-center justify-between bg-white px-4 shadow-lg backdrop-blur-sm">
+<div class="z-50 flex h-auto items-center justify-around pt-3" role="presentation">
+	<nav
+		class="flex h-full items-center justify-center gap-3 rounded-xl bg-white px-3 shadow-lg backdrop-blur-sm"
+	>
 		<!-- Logo and Title -->
-		<div class="flex items-center gap-4">
-			<img src={logoSrc} alt="Logo" class="h-10 w-10 rounded-lg shadow-md" />
-			<h1 class="text-center text-sm font-semibold text-black drop-shadow-md">{title}</h1>
+		<a href="/home" class="flex items-center justify-center">
+			<img src={logo} alt="Logo" class="h-20 w-20 rounded-lg" />
+		</a>
+
+		<div class="hidden md:lg:block">
+			<h1 class="text-md text-wrap text-center font-semibold text-black drop-shadow-md">
+				{title}
+			</h1>
 		</div>
 
 		<!-- Navigation Buttons -->
 		<div class="flex items-center gap-3">
-			<!-- Help Button -->
 			<div class="relative flex items-center gap-1">
 				<button
-					onclick={toggleHelp}
+					onclick={() => (showModal = true)}
 					class="black/30 hover:black/50 flex h-8 min-w-[35px] items-center justify-center rounded-full border-2 bg-white/20 px-4 py-2 text-lg font-bold text-black backdrop-blur-md transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/30 hover:shadow-lg active:translate-y-0"
 					title="Help"
 				>
 					?
 				</button>
-
-				{#if showHelpPopup}
-					<div
-						class="absolute top-14 right-0 z-50 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm whitespace-nowrap text-blue-800 shadow-xl before:absolute before:-top-2 before:right-4 before:h-0 before:w-0 before:border-r-8 before:border-b-8 before:border-l-8 before:border-transparent before:border-b-blue-50 before:content-['']"
-					>
-						{#if showHelp}
-							Welcome! Click here for help and tutorials.
-						{:else}
-							Help not implemented
-						{/if}
-					</div>
-				{/if}
+				{@render Help()}
 			</div>
-
-			<!-- Profile Button -->
 			<div class="relative">
 				<button
 					onclick={handleProfile}
@@ -114,9 +93,9 @@
 					👤
 				</button>
 
-				{#if showProfilePopup}
+				<!-- {#if showProfilePopup}
 					<div
-						class="absolute top-14 right-0 z-50 rounded-lg border border-orange-200 bg-orange-50 text-sm whitespace-nowrap text-orange-700 shadow-xl before:absolute before:-top-2 before:right-4 before:h-0 before:w-0 before:border-r-8 before:border-b-8 before:border-l-8 before:border-transparent before:border-b-orange-50 before:content-['']"
+						class="absolute right-0 top-14 z-50 whitespace-nowrap rounded-lg border border-orange-200 bg-orange-50 text-sm text-orange-700 shadow-xl before:absolute before:-top-2 before:right-4 before:h-0 before:w-0 before:border-b-8 before:border-l-8 before:border-r-8 before:border-transparent before:border-b-orange-50 before:content-['']"
 					>
 						{#if isLoggedIn}
 							Redirecting to your profile...
@@ -124,41 +103,65 @@
 							Please log in to access your profile.
 						{/if}
 					</div>
-				{/if}
+				{/if} -->
 			</div>
 
-			<!-- Language Button -->
 			<div class="relative">
 				<button
 					onclick={toggleLang}
 					class="black/30 hover:black/50 flex h-8 min-w-[35px] items-center justify-center rounded-full border-2 bg-white/20 px-4 py-2 text-sm font-semibold text-black backdrop-blur-md transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/30 hover:shadow-lg active:translate-y-0"
 					title="Language"
 				>
-					{currentLang}
+					{Lang.value}
 				</button>
 
-				{#if showLangPopup}
+				<!-- {#if showLangPopup}
 					<div
-						class="absolute top-14 right-0 z-50 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm whitespace-nowrap text-red-700 shadow-xl before:absolute before:-top-2 before:right-4 before:h-0 before:w-0 before:border-r-8 before:border-b-8 before:border-l-8 before:border-transparent before:border-b-red-50 before:content-['']"
+						class="absolute right-0 top-14 z-50 whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-xl before:absolute before:-top-2 before:right-4 before:h-0 before:w-0 before:border-b-8 before:border-l-8 before:border-r-8 before:border-transparent before:border-b-red-50 before:content-['']"
 					>
 						Invalid language setting. Please contact support.
 					</div>
-				{/if}
+				{/if} -->
 			</div>
 
 			<div class="relative">
 				<button
 					aria-label="Online"
 					class={`flex h-8 min-w-[35px] items-center justify-center rounded-full border-2 ${
-						isOnline ? 'bg-green-100' : 'bg-red-100'
+						Online.value ? 'bg-green-100' : 'bg-red-100'
 					} px-4 py-2 text-lg backdrop-blur-md transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg active:translate-y-0`}
 				>
-					<div class={`h-3 w-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`}></div>
+					<div class={`h-3 w-3 rounded-full ${Online.value ? 'bg-green-500' : 'bg-red-500'}`}></div>
 				</button>
 			</div>
 		</div>
 	</nav>
 </div>
 
-<!-- Spacer to prevent content from hiding behind fixed navbar -->
-<div class="h-20"></div>
+{#snippet Help()}
+	<Modal bind:showModal>
+		{#snippet header()}
+			<h2>
+				modal
+				<small><em>adjective</em> mod·al \ˈmō-dəl\</small>
+			</h2>
+		{/snippet}
+
+		<ol class="definition-list">
+			<li>of or relating to modality in logic</li>
+			<li>
+				containing provisions as to the mode of procedure or the manner of taking effect —used of a
+				contract or legacy
+			</li>
+			<li>of or relating to a musical mode</li>
+			<li>of or relating to structure as opposed to substance</li>
+			<li>
+				of, relating to, or constituting a grammatical form or category characteristically
+				indicating predication
+			</li>
+			<li>of or relating to a statistical mode</li>
+		</ol>
+
+		<a href="https://www.merriam-webster.com/dictionary/modal">merriam-webster.com</a>
+	</Modal>
+{/snippet}

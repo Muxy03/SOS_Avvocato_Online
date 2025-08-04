@@ -22,16 +22,14 @@
 	});
 </script>
 
-<Navbar {user} />
-
 <div class="container">
 	<!-- First Clickable DIV -->
 	<div
 		class="clickable-div div1"
-		onclick={() => goto('/call')}
+		onclick={() => (window.location.href = '/call')}
 		role="button"
 		tabindex="0"
-		onkeydown={(e) => e.key === 'Enter' && goto('/call')}
+		onkeydown={(e) => e.key === 'Enter' && (window.location.href = '/call')}
 	>
 		<div class="shine-overlay"></div>
 		<div class="content">
@@ -41,12 +39,13 @@
 	</div>
 
 	<!-- Second Clickable DIV -->
+	<!-- onkeydown={(e) => e.key === 'Enter' && (window.location.href = '/write')} -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		class="clickable-div div2"
-		onclick={() => goto('/write')}
+		onclick={() => (window.location.href = '/write')}
 		role="button"
 		tabindex="0"
-		onkeydown={(e) => e.key === 'Enter' && goto('/write')}
 	>
 		<div class="shine-overlay"></div>
 		<div class="content">

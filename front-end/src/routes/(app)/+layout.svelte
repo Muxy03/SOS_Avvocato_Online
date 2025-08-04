@@ -4,6 +4,8 @@
 	const user = $state({ ...data.user });
 </script>
 
-<Navbar {user} />
+<div class="flex h-full w-full flex-col items-center gap-6">
+	<Navbar {user} />
 
-{@render children()}
+	{@render children()}
+</div>

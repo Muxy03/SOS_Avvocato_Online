@@ -15,19 +15,20 @@
 	const emailValid = $derived(email.includes('@') && email.includes('.'));
 	const passwordValid = $derived(password.length >= 6);
 	const formValid = $derived(emailValid && passwordValid);
-	let error: { value: string } | undefined = $state(undefined);
-	let user: { value: UserData | undefined } | undefined = $state(undefined);
-	let RememberMe: { value: boolean } | undefined = $state(undefined);
-	onMount(() => {
-		const App: AppContext = getContext('App');
-		RememberMe = { ...App.RememberMe };
-		user = { ...App.user };
-		error = { ...App.error };
-	});
+	let error: { value: string } | undefined = $state({ value: '' });
+	let user: { value: UserData | undefined } | undefined = $state({ value: undefined });
+	
+	// let RememberMe: { value: boolean } | undefined = $state({ value: undefined });
+	// onMount(() => {
+	// 	const App: AppContext = getContext('App');
+	// 	RememberMe = { ...App.RememberMe };
+	// 	user = { ...App.user };
+	// 	error = { ...App.error };
+	// });
 </script>
 
 <div
-	class="relative container flex min-h-screen min-w-screen flex-col items-center justify-center p-4"
+	class="min-w-screen container relative flex min-h-screen flex-col items-center justify-center p-4"
 >
 	<!-- Form di autenticazione -->
 	<div class="auth-card flex flex-col items-center justify-center gap-3">
@@ -125,7 +126,7 @@
 			</button>
 		</form>
 
-		<div class="w-full auth-switch flex flex-col items-center justify-center gap-2">
+		<div class="auth-switch flex w-full flex-col items-center justify-center gap-2">
 			<div class="w-full border-t border-gray-600"></div>
 			<p>
 				Non hai un account?

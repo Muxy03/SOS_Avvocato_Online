@@ -8,12 +8,13 @@
 		type User
 	} from 'firebase/auth';
 	import firebase from '$lib/firebase';
-	import { clearUserSession, getUserSession, storeUserSession } from '$lib/Locally';
+	import { registerServiceWorker, storeUserSession } from '$lib/Locally';
 	import { navigating } from '$app/state';
+	import { Online } from '$lib/shared.svelte';
 
 	let { children } = $props();
 
-	const isOnline = $state({ value: true });
+	// const isOnline = $state({ value: true });
 	const rememberMe = $state({ value: true });
 	let user: { value: User | undefined } = $state({ value: undefined });
 	const error = $state({ value: '' });
@@ -28,32 +29,19 @@
 		if (response.status === 200) {
 			const userSession = await response.json();
 		}
-
-		// if (session) {
-		// 	user.value = session;
-		// } else {
-		// 	user.value = undefined;
-		// }
 	}
 
 	function updateOnlineStatus() {
-		isOnline.value = navigator.onLine;
+		Online.value = navigator.onLine;
 	}
 
 	setContext('App', {
-		isOnline,
-		isLoading,
-		rememberMe,
-		user,
 		error
 	});
 
 	onMount(() => {
-		if ('serviceWorker' in navigator) {
-			addEventListener('load', function () {
-				navigator.serviceWorker.register('../service-worker.js');
-			});
-		}
+		registerServiceWorker();
+
 		async () => {
 			try {
 				await setPersistence(firebase.auth, browserLocalPersistence);
@@ -66,7 +54,7 @@
 			if (authUser) {
 				user.value = authUser;
 				storeUserSession(authUser);
-			}// } else {
+			} // } else {
 			// 	clearUserSession();
 			// }
 		});

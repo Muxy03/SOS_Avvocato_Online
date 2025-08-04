@@ -5,13 +5,15 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
 		const { Id, Consultation } = await request.json();
 
-		if (!Consultation) {
+		console.log(Id, Consultation);
+
+		if (!Id || !Consultation) {
 			return json({ success: false, message: 'Consultation is required' }, { status: 400 });
 		}
 
 		// Set cookie with email information
 		// Cookie expires in 30 days
-		cookies.set(Id, Consultation, {
+		cookies.set('Email:' + Id, Consultation, {
 			path: '/',
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',

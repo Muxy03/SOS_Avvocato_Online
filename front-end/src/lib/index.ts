@@ -32,7 +32,7 @@ export type UserAdmin = {
 	password: 'admin';
 };
 
-type Attachment = {
+export type Attachment = {
 	name: string;
 	content: string;
 };

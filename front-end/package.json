@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 static/logo.svg"
+		"generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 static/LOGO.jpeg"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

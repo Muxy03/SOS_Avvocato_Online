@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { AppContext } from '$lib';
+	import type { AppContext, UserData } from '$lib';
 	import firebase from '$lib/firebase';
 	import { redirect } from '@sveltejs/kit';
 	import { createUserWithEmailAndPassword, type User } from 'firebase/auth';
@@ -18,38 +18,36 @@
 	const fullNameValid = $derived(fullName.length > 0);
 	const formValid = $derived(emailValid && passwordValid && fullNameValid);
 
-	let error: { value: string } | undefined = $state(undefined);
-	let user: { value: User | undefined } | undefined = $state(undefined);
-	let RememberMe: { value: boolean } | undefined = $state(undefined);
+	let error: { value: string } | undefined = $state({ value: '' });
+	let user: { value: UserData | undefined } | undefined = $state({ value: undefined });
+	// let RememberMe: { value: boolean } | undefined = $state({ value: undefined });
 
-	onMount(() => {
-		const App: AppContext = getContext('App');
-		RememberMe = { ...App.RememberMe };
-		user = { ...App.user };
-		error = { ...App.error };
-	});
+	// onMount(() => {
+	// 	const App: AppContext = getContext('App');
+	// 	RememberMe = { ...App.RememberMe };
+	// 	user = { ...App.user };
+	// 	error = { ...App.error };
+	// });
 
-	$effect(() => {
-		let tmp: AppContext = getContext('App');
-		if (user) {
-			tmp.user = user;
-		}
+	// $effect(() => {
+	// 	let tmp: AppContext = getContext('App');
+	// 	if (user) {
+	// 		tmp.user = user;
+	// 	}
 
-		if (error) {
-			tmp.error = error;
-		}
+	// 	if (error) {
+	// 		tmp.error = error;
+	// 	}
 
-		if (RememberMe) {
-			tmp.RememberMe = RememberMe;
-		}
+	// 	if (RememberMe) {
+	// 		tmp.RememberMe = RememberMe;
+	// 	}
 
-		setContext('App', tmp);
-	});
+	// 	setContext('App', tmp);
+	// });
 </script>
 
-<div
-	class="relative container flex flex-col items-center justify-center"
->
+<div class="container relative flex flex-col items-center justify-center">
 	<div class="auth-card flex flex-col items-center justify-center gap-3">
 		<div class="auth-header">
 			<h1>Registrati</h1>
@@ -152,8 +150,7 @@
 			</button>
 		</form>
 
-		<div class="w-full auth-switch flex flex-col items-center justify-center gap-2">
-
+		<div class="auth-switch flex w-full flex-col items-center justify-center gap-2">
 			<div class="w-full border-t border-gray-600"></div>
 			<p>
 				Hai già un account?

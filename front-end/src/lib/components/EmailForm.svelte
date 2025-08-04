@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { FILE, Email, AppContext } from '$lib';
+	import { toBase64Browser } from '$lib/brevo';
 	import { getContext } from 'svelte';
 
 	// State variables
@@ -15,21 +16,7 @@
 	let errors = $derived({ to: to, subject: subject, message: message });
 	let fileInput: HTMLInputElement | undefined = $state();
 
-	const { error }: AppContext = getContext('App');
-
-	function Test() {
-		const Test = {
-			sender: { email: 'a.mussari@studenti.unipi.it', name: 'Andrea Mussari' },
-			to: [{ email: 'a.mussari@studenti.unipi.it', name: 'Andrea Mussari' }],
-			textContent: 'TESTING',
-			subject: 'TEST',
-			htmlContent: '',
-			attachment: []
-		};
-		(Test as Email).htmlContent = `<p>${Test.textContent}</p>`;
-
-		return Test as Email;
-	}
+	//const { error }: AppContext = getContext('App');
 
 	// Utility functions
 	function formatFileSize(bytes: number) {
@@ -95,197 +82,200 @@
 	}
 </script>
 
-<div class="flex min-h-screen items-center justify-center">
-	<div class="flex h-[600px] w-[300px] flex-col items-center justify-center">
-		<div
+<div class="flex items-center justify-center">
+	<div class="flex w-[300px] flex-col items-center justify-center">
+		<!-- <div
 			class="flex w-full flex-col items-center justify-around gap-5 overflow-hidden rounded-lg bg-white shadow-lg"
-		>
-			<!-- Header -->
-			<div class="flex flex-col items-center justify-center gap-1 bg-white">
+		> -->
+		<!-- Header -->
+		<!-- <div class="flex flex-col items-center justify-center gap-1 bg-white">
 				<h1 class="text-2xl font-bold text-blue-600">Send Email</h1>
 				<div class="w-full border-t border-t-blue-600"></div>
 				<p class=" text-center text-blue-500">Compose and send your message with attachments</p>
 				<div class="w-full border-t border-t-blue-600"></div>
-			</div>
+			</div> -->
 
-			<!-- Form -->
-			<form
-				class="flex flex-col items-center gap-1"
-				method="POST"
-				action="?/sendEmail"
-				use:enhance={({ formData }) => {
-					isSubmitting = true;
+		<!-- Form -->
+		<form
+			class="flex flex-col items-center gap-1 rounded-lg bg-white shadow-lg p-5"
+			method="POST"
+			action="?/sendEmail"
+			use:enhance={async ({ formData }) => {
+				isSubmitting = true;
 
-					// Add form data
-					formData.set('to', to);
-					formData.set('subject', subject);
-					formData.set('message', message);
+				// Add form data
+				formData.set('to', to);
+				formData.set('subject', subject);
+				formData.set('message', message);
 
-					return async ({ result, update }) => {
-						isSubmitting = false;
+				for (const f of attachments) {
+					const str = (await toBase64Browser(f.file)).split(',')[1];
+					formData.append('attachments',JSON.stringify({ name: f.name, content: str }));
+				}
 
-						if (result.type === 'success') {
-							await update();
-						} else if (result.type === 'failure') {
-							// TODO: Handle FIREBASE ERROR
-							error.value = result.data?.code as string;
-							await update();
-						}
-					};
-				}}
-			>
-				<!-- To field -->
-				<div class="flex items-center justify-between gap-4">
-					<label for="sender-mail" class="block text-sm font-medium text-gray-700"> To </label>
-					<input
-						id="sender-mail"
-						type="email"
-						bind:value={to}
-						placeholder="recipient@example.com"
-						class="w-full rounded-md border border-gray-300 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-					<!-- {#if errors.to}
+				return async ({ result, update }) => {
+					isSubmitting = false;
+
+					if (result.type === 'success') {
+						await update();
+					} else if (result.type === 'failure') {
+						// TODO: Handle FIREBASE ERROR
+						//error.value = result.data?.code as string;
+						await update();
+					}
+				};
+			}}
+		>
+			<!-- To field -->
+			<div class="flex items-center justify-between gap-4">
+				<label for="sender-mail" class="block text-sm font-medium text-gray-700"> To </label>
+				<input
+					id="sender-mail"
+					type="email"
+					bind:value={to}
+					placeholder="recipient@example.com"
+					class="w-full rounded-md border border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+				<!-- {#if errors.to}
 						<p class="mt-1 text-sm text-red-600">{errors.to}</p>
 					{/if} -->
-				</div>
+			</div>
 
-				<!-- CC/BCC toggle -->
-				{#if !showCcBcc}
-					<button
-						type="button"
-						onclick={() => (showCcBcc = true)}
-						class="text-sm font-medium text-blue-600 hover:text-blue-800"
-					>
-						+ Add CC/BCC
-					</button>
-				{/if}
+			<!-- CC/BCC toggle -->
+			{#if !showCcBcc}
+				<button
+					type="button"
+					onclick={() => (showCcBcc = true)}
+					class="text-sm font-medium text-blue-600 hover:text-blue-800"
+				>
+					+ Add CC/BCC
+				</button>
+			{/if}
 
-				<!-- CC/BCC fields -->
-				{#if showCcBcc}
-					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<div>
-							<label for="cc-email" class="mb-2 block text-sm font-medium text-gray-700">CC</label>
-							<input
-								id="cc-email"
-								type="email"
-								bind:value={cc}
-								placeholder="cc@example.com"
-								class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-							/>
-						</div>
-						<div>
-							<label for="bcc-email" class="mb-2 block text-sm font-medium text-gray-700">BCC</label
-							>
-							<input
-								id="bcc-email"
-								type="email"
-								bind:value={bcc}
-								placeholder="bcc@example.com"
-								class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-							/>
-						</div>
+			<!-- CC/BCC fields -->
+			{#if showCcBcc}
+				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+					<div>
+						<label for="cc-email" class="mb-2 block text-sm font-medium text-gray-700">CC</label>
+						<input
+							id="cc-email"
+							type="email"
+							bind:value={cc}
+							placeholder="cc@example.com"
+							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
 					</div>
-				{/if}
+					<div>
+						<label for="bcc-email" class="mb-2 block text-sm font-medium text-gray-700">BCC</label>
+						<input
+							id="bcc-email"
+							type="email"
+							bind:value={bcc}
+							placeholder="bcc@example.com"
+							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+				</div>
+			{/if}
 
-				<!-- Subject field -->
-				<div>
-					<label for="subject" class="mb-2 block text-sm font-medium text-gray-700">
-						Subject <span class="text-red-500">*</span>
-					</label>
-					<input
-						id="subject"
-						type="text"
-						bind:value={subject}
-						placeholder="Enter email subject"
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-					<!-- {#if errors.subject}
+			<!-- Subject field -->
+			<div>
+				<label for="subject" class="mb-2 block text-sm font-medium text-gray-700">
+					Subject <span class="text-red-500">*</span>
+				</label>
+				<input
+					id="subject"
+					type="text"
+					bind:value={subject}
+					placeholder="Enter email subject"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+				<!-- {#if errors.subject}
 						<p class="mt-1 text-sm text-red-600">{errors.subject}</p>
 					{/if} -->
-				</div>
+			</div>
 
-				<!-- Message field -->
-				<div>
-					<label for="message" class="mb-2 block text-sm font-medium text-gray-700">
-						Message <span class="text-red-500">*</span>
-					</label>
-					<textarea
-						id="message"
-						rows="6"
-						bind:value={message}
-						placeholder="Enter your message here..."
-						class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					></textarea>
-					<!-- {#if errors.message}
+			<!-- Message field -->
+			<div>
+				<label for="message" class="mb-2 block text-sm font-medium text-gray-700">
+					Message <span class="text-red-500">*</span>
+				</label>
+				<textarea
+					id="message"
+					rows="6"
+					bind:value={message}
+					placeholder="Enter your message here..."
+					class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+				></textarea>
+				<!-- {#if errors.message}
 						<p class="mt-1 text-sm text-red-600">{errors.message}</p>
 					{/if} -->
-				</div>
+			</div>
 
-				<!-- Attachments section -->
-				<div class="flex flex-col items-center gap-2">
-					<label for="files" class="mb-2 block text-sm font-medium text-gray-700">Attachments</label
-					>
+			<!-- Attachments section -->
+			<div class="flex flex-col items-center gap-2">
+				<label for="files" class="mb-2 block text-sm font-medium text-gray-700">Attachments</label>
 
-					<input
-						id="files"
-						bind:this={fileInput}
-						type="file"
-						multiple
-						onchange={handleFileSelect}
-						class="hidden"
-					/>
+				<input
+					id="files"
+					bind:this={fileInput}
+					type="file"
+					multiple
+					onchange={handleFileSelect}
+					class="hidden"
+				/>
 
-					<!-- Attachment list -->
-					{#if attachments.length > 0}
-						<div class="space-y-2">
-							{#each attachments as attachment}
-								<div class="file-item flex items-center justify-between rounded-lg bg-gray-50">
-									<div class="flex items-center justify-center gap-1">
-										<!-- <span class="text-md">{getFileIcon(attachment.name)}</span> -->
-										<div>
-											<p class="font-medium text-gray-900">{attachment.name}</p>
-											<p class="text-sm text-gray-500">{formatFileSize(attachment.size)}</p>
-										</div>
+				<!-- Attachment list -->
+				{#if attachments.length > 0}
+					<div class="space-y-2">
+						{#each attachments as attachment}
+							<div class="file-item flex items-center justify-between rounded-lg bg-gray-50">
+								<div class="flex items-center justify-center gap-1">
+									<!-- <span class="text-md">{getFileIcon(attachment.name)}</span> -->
+									<div>
+										<p class="font-medium text-gray-900">{attachment.name}</p>
+										<p class="text-sm text-gray-500">{formatFileSize(attachment.size)}</p>
 									</div>
-									<button
-										type="button"
-										onclick={() => removeAttachment(attachment.id)}
-										class="font-medium text-red-500 hover:text-red-700"
-									>
-										✕
-									</button>
 								</div>
-							{/each}
-						</div>
-					{/if}
-
-					<div class="text-sm text-gray-500">
-						{attachments.length} file(s) attached
+								<button
+									type="button"
+									onclick={() => removeAttachment(attachment.id)}
+									class="font-medium text-red-500 hover:text-red-700"
+								>
+									✕
+								</button>
+							</div>
+						{/each}
 					</div>
-				</div>
+				{/if}
 
-				<!-- Submit section -->
-				<div class="flex flex-col items-center justify-between ">
-					<div class="flex gap-3">
-						<button
-							type="button"
-							onclick={handleCancel}
-							class="rounded-md border border-gray-300 font-medium text-gray-700 transition-colors hover:bg-gray-50"
-						>
-							Cancel
-						</button>
-
-						<button
-							type="submit"
-							disabled={isSubmitting}
-							class="h-[30px] w-[100px] transform rounded-md bg-blue-600 font-medium text-white transition-all hover:scale-105 hover:from-blue-700 hover:to-purple-700 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							{isSubmitting ? 'Sending...' : 'Send Email'}
-						</button>
-					</div>
+				<div class="text-sm text-gray-500">
+					{attachments.length} file(s) attached
 				</div>
-			</form>
-		</div>
+			</div>
+
+			<!-- Submit section -->
+			<div class="flex flex-col items-center justify-between">
+				<div class="flex gap-3">
+					<button
+						type="button"
+						onclick={handleCancel}
+						class="rounded-md border border-gray-300 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+					>
+						Cancel
+					</button>
+
+					<button
+						type="submit"
+						disabled={isSubmitting}
+						class="h-[30px] w-[100px] transform rounded-md bg-blue-600 font-medium text-white transition-all hover:scale-105 hover:from-blue-700 hover:to-purple-700 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						{isSubmitting ? 'Sending...' : 'Send Email'}
+					</button>
+				</div>
+			</div>
+		</form>
+		<!-- </div> -->
 	</div>
 </div>
 
