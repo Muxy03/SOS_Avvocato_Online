@@ -7,7 +7,7 @@ import type { PageServerLoad } from '../$types';
 import type { AppContext, UserData } from '$lib';
 import { getContext } from 'svelte';
 
-const { error }: AppContext = getContext('App');
+// const { error }: AppContext = getContext('App');
 
 export const actions: Actions = {
 	login: async ({ fetch, request }) => {
@@ -81,7 +81,7 @@ export const actions: Actions = {
 				}
 			}
 		} catch (err) {
-			error.value = 'Error: Login failed';
+			//error.value = 'Error: Login failed';
 			return fail(400, err instanceof Error ? { error: err.message } : { error: 'Login failed' });
 		}
 
