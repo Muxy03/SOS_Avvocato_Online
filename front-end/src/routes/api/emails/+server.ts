@@ -1,5 +1,9 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { getContext } from 'svelte';
+import type { AppContext } from '$lib';
+
+// const { error }: AppContext = getContext('App');
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
@@ -22,8 +26,9 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		});
 
 		return json({ success: true, message: 'Consultation saved successfully' });
-	} catch (error) {
-		console.error('Error saving Consultation:', error);
+	} catch (err) {
+		// error.value = 'Error saving Consultation';
+		console.error('Error saving Consultation:', err);
 		return json({ success: false, message: 'Failed to save Consultation' }, { status: 500 });
 	}
 };
@@ -42,8 +47,9 @@ export const GET: RequestHandler = async ({ request, cookies }) => {
 		}
 
 		return json({ success: true, consultation: JSON.parse(cookie.value) });
-	} catch (error) {
-		console.error('Error retrieving consultations:', error);
+	} catch (err) {
+		// error.value = 'Error retrieving consultations';
+		console.error('Error retrieving consultations:', err);
 		return json({ success: false, message: 'Failed to retrieve consultations' }, { status: 500 });
 	}
 };
@@ -58,8 +64,9 @@ export const DELETE: RequestHandler = async ({ request, cookies }) => {
 
 		cookies.delete(userID, { path: '/' });
 		return json({ success: true, message: 'Consultation deleted successfully' });
-	} catch (error) {
-		console.error('Error deleting consultation:', error);
+	} catch (err) {
+		// error.value = 'Error deleting consultation';
+		console.error('Error deleting consultation:', err);
 		return json({ success: false, message: 'Failed to delete consultation' }, { status: 500 });
 	}
 };

@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { FILE, Email, AppContext } from '$lib';
 	import { toBase64Browser } from '$lib/brevo';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	// State variables
 	let to = $state('a.mussari@studenti.unipi.it');
@@ -16,7 +16,7 @@
 	let errors = $derived({ to: to, subject: subject, message: message });
 	let fileInput: HTMLInputElement | undefined = $state();
 
-	//const { error }: AppContext = getContext('App');
+	let  error  = {value :''};
 
 	// Utility functions
 	function formatFileSize(bytes: number) {
@@ -80,6 +80,9 @@
 			errors = { to, subject, message };
 		}
 	}
+	onMount(()=>{
+		error = getContext('App');
+	})
 </script>
 
 <div class="flex items-center justify-center">
@@ -97,7 +100,7 @@
 
 		<!-- Form -->
 		<form
-			class="flex flex-col items-center gap-1 rounded-lg bg-white shadow-lg p-5"
+			class="flex flex-col items-center gap-1 rounded-lg bg-white p-5 shadow-lg"
 			method="POST"
 			action="?/sendEmail"
 			use:enhance={async ({ formData }) => {
@@ -110,7 +113,7 @@
 
 				for (const f of attachments) {
 					const str = (await toBase64Browser(f.file)).split(',')[1];
-					formData.append('attachments',JSON.stringify({ name: f.name, content: str }));
+					formData.append('attachments', JSON.stringify({ name: f.name, content: str }));
 				}
 
 				return async ({ result, update }) => {

@@ -1,6 +1,9 @@
 import { addDoc, arrayUnion, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import firebase from './firebase';
-import type { Email, Consultation, Attachment } from '$lib';
+import type { Email, Consultation, Attachment, AppContext } from '$lib';
+import { getContext } from 'svelte';
+
+//const { error }: AppContext = getContext('App');
 
 export function toBase64Browser(file: File | Blob): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -15,6 +18,7 @@ export async function sendTransactionalEmail(
 	email: Email,
 	userUid: string,
 	attachments: Attachment[] = [],
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	fetch: any
 ) {
 	const url = 'https://api.brevo.com/v3/smtp/email';
@@ -56,6 +60,7 @@ export async function sendTransactionalEmail(
 		const User = Users.find((dc) => dc.data().id === userUid);
 
 		if (!User) {
+			//error.value = 'NO USER';
 			throw new Error('NO USER');
 		}
 
@@ -74,6 +79,7 @@ export async function sendTransactionalEmail(
 			body: JSON.stringify({ Id: newdoc.id, Consultation })
 		});
 	} catch (err) {
+		//error.value = 'Failed to save email to Firestore:' + err;
 		console.error('Failed to save email to Firestore:', err);
 	}
 

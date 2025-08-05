@@ -1,9 +1,12 @@
 import type { Email } from '$lib';
 import { sendTransactionalEmail } from '$lib/brevo';
+import { error } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 export const actions = {
 	sendEmail: async ({ fetch, request }) => {
+		throw error(500, 'Something went wrong in /write');
+
 		const FormData = await request.formData();
 
 		const attachments = FormData.getAll('attachments').map((x) => JSON.parse(x as string));
@@ -26,7 +29,7 @@ export const actions = {
 
 		if (user_session.ok) {
 			const user = await user_session.json();
-			await sendTransactionalEmail(Test, user.id, attachments,fetch);
+			await sendTransactionalEmail(Test, user.id, attachments, fetch);
 		} else {
 			throw new Error('User is not authenticated');
 		}

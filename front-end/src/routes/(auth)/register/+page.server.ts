@@ -3,20 +3,11 @@ import type { Actions } from '@sveltejs/kit';
 import firebase from '$lib/firebase';
 import { fail, redirect } from '@sveltejs/kit';
 import { addDoc, collection } from 'firebase/firestore';
-import type { UserData } from '$lib';
+import type { AppContext, UserData } from '$lib';
 import type { PageServerLoad } from '../$types';
+import { getContext } from 'svelte';
 
-// async function check(uid: string){
-// 	const Snapshot = (await getDocs(collection(firebase.db, 'Users'))).docs;
-
-// 	if(Snapshot.length === 0) return true;
-
-// 	for(const doc of Snapshot){
-// 		if(doc.data().id === uid) return false;
-// 	}
-
-// 	return true;
-// }
+// const { error }:AppContext = getContext('App');
 
 export const actions: Actions = {
 	register: async ({ fetch, request }) => {
@@ -62,6 +53,7 @@ export const actions: Actions = {
 				body: JSON.stringify(User)
 			});
 		} catch (err: unknown) {
+			//error.value = 'Registration error';
 			console.error('Registration error:', err);
 
 			await fetch('/api/session', {

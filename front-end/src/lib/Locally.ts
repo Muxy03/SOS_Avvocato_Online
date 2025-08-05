@@ -1,6 +1,10 @@
 // import { serverTimestamp } from 'firebase/firestore';
 //import type { UserData } from '$lib';
+import type { AppContext } from '$lib';
 import type { User } from 'firebase/auth';
+import { getContext } from 'svelte';
+
+//const { error }: AppContext = getContext('App');
 
 export function getInitials(name: string, email: string) {
 	if (name && name.trim()) {
@@ -101,8 +105,9 @@ export function registerServiceWorker() {
 					console.log('App went offline');
 					showOfflineNotification();
 				});
-			} catch (error) {
-				console.error('Service Worker registration failed:', error);
+			} catch (err) {
+				//error.value = `Service Worker registration failed`;
+				console.error('Service Worker registration failed:', err);
 			}
 		});
 	} else {
@@ -111,7 +116,7 @@ export function registerServiceWorker() {
 }
 
 // Handle messages from service worker
-function handleServiceWorkerMessage(data: {data:unknown, type:string}) {
+function handleServiceWorkerMessage(data: { data: unknown; type: string }) {
 	switch (data.type) {
 		case 'OFFLINE_REQUEST_SYNCED':
 			console.log('Offline request synced:', data.data);
@@ -166,9 +171,8 @@ export function isRequestQueued(response: Response) {
 }
 
 // Enhanced fetch wrapper that works with the service worker
-export async function apiCall(url: string, options = {headers : {}}) {
+export async function apiCall(url: string, options = { headers: {} }) {
 	try {
-
 		const response = await fetch(url, {
 			...options,
 			headers: {
@@ -193,13 +197,15 @@ export async function apiCall(url: string, options = {headers : {}}) {
 		if (response.status === 503) {
 			const data = await response.json();
 			if (data.offline) {
+				// error.value = 'App is offline';
 				throw new Error('App is offline');
 			}
 		}
 
 		return await response.json();
-	} catch (error) {
-		console.error('API call failed:', error);
-		throw error;
+	} catch (err) {
+		// error.value = 'API call failed:' + err;
+		console.error('API call failed:', err);
+		throw err;
 	}
 }

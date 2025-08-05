@@ -4,7 +4,10 @@ import { fail, redirect } from '@sveltejs/kit';
 import firebase from '$lib/firebase';
 import { doc, getDocs, updateDoc, collection } from 'firebase/firestore';
 import type { PageServerLoad } from '../$types';
-import type { UserData } from '$lib';
+import type { AppContext, UserData } from '$lib';
+import { getContext } from 'svelte';
+
+const { error }: AppContext = getContext('App');
 
 export const actions: Actions = {
 	login: async ({ fetch, request }) => {
@@ -77,7 +80,8 @@ export const actions: Actions = {
 					}
 				}
 			}
-		} catch (err: unknown) {
+		} catch (err) {
+			error.value = 'Error: Login failed';
 			return fail(400, err instanceof Error ? { error: err.message } : { error: 'Login failed' });
 		}
 

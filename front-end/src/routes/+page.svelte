@@ -5,17 +5,15 @@
 	import firebase from '$lib/firebase';
 	import { clearUserSession, getInitials } from '$lib/Locally';
 	import { Online } from '$lib/shared.svelte.js';
-	import { signOut, type User } from 'firebase/auth';
+	import { signOut } from 'firebase/auth';
 	import { getContext, onMount } from 'svelte';
-
-	// const { isOnline, isLoading, user, error }: AppContext = getContext('App');
 
 	let { data } = $props();
 
 	// const isOnline = $state({ value: true });
 	const rememberMe = $state({ value: true });
 	let user: { value: UserData | undefined } = $state({ value: undefined });
-	const error = $state({ value: '' });
+	let error = $state({ value: '' });
 	const isLoading: { value: boolean | undefined } = $state({ value: navigating.complete !== null });
 
 	isLoading.value = navigating.complete !== null;
@@ -53,11 +51,10 @@
 		}
 	}
 
-	// onMount(() => {
-	// 	(async () => {
-	// 		await setUser();
-	// 	})();
-	// });
+	onMount(() => {
+		error = getContext('App');
+		setUser();
+	});
 </script>
 
 {#if !Online.value}

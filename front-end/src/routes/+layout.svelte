@@ -11,6 +11,8 @@
 	import { registerServiceWorker, storeUserSession } from '$lib/Locally';
 	import { navigating } from '$app/state';
 	import { Online } from '$lib/shared.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import { page } from '$app/state';
 
 	let { children } = $props();
 
@@ -19,6 +21,11 @@
 	let user: { value: User | undefined } = $state({ value: undefined });
 	const error = $state({ value: '' });
 	const isLoading = $state({ value: navigating.complete !== null });
+	let showModal = $state(false);
+
+	if (page.error) {
+		showModal = true;
+	}
 
 	async function setUser() {
 		const response = await fetch('/api/session', {
@@ -35,18 +42,19 @@
 		Online.value = navigator.onLine;
 	}
 
-	setContext('App', {
-		error
-	});
-
 	onMount(() => {
 		registerServiceWorker();
+
+		setContext('App', {
+			error
+		});
 
 		async () => {
 			try {
 				await setPersistence(firebase.auth, browserLocalPersistence);
 			} catch (err) {
-				console.warn('Could not set auth persistence:', err);
+				error.value = 'Could not set auth persistence:' + err;
+				// console.warn('Could not set auth persistence:', err);
 			}
 		};
 
@@ -92,5 +100,16 @@
 		<div class="flex h-full w-full items-center justify-center">
 			{@render children()}
 		</div>
+
+		<Modal bind:showModal>
+			{#snippet header()}
+				<h2>ERROR</h2>
+			{/snippet}
+
+			{page.error?.message}
+
+			<!-- <ol class="definition-list">
+			</ol> -->
+		</Modal>
 	</main>
 </div>

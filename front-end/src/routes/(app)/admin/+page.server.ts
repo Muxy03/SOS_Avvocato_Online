@@ -1,7 +1,10 @@
 import firebase from '$lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import type { PageServerLoad } from '../../$types';
-import type { Consultation } from '$lib';
+import type { AppContext, Consultation } from '$lib';
+import { getContext } from 'svelte';
+
+// const { error }: AppContext = getContext('App');
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -17,25 +20,26 @@ export const load: PageServerLoad = async () => {
 					updatedAt: doc.data().updatedAt,
 					email: doc.data().email,
 					status: doc.data().status,
-					userID: doc.data().userID,
+					userID: doc.data().userID
 				} as Consultation;
 			});
 
 			return {
 				consultations: consultations as Consultation[],
-				error: null
+				'error': null
 			};
 		}
 
 		return {
 			consultations: [] as Consultation[],
-			error: 'No consultations found'
+			'error': 'No consultations found'
 		};
-	} catch (error) {
-		console.error('Error fetching consultations:', error);
+	} catch (err) {
+		//error.value = 'Error fetching consultations:' + err;
+		console.error('Error fetching consultations:', err);
 		return {
 			consultations: [] as Consultation[],
-			error: 'Failed to fetch consultations'
+			'error': 'Failed to fetch consultations'
 		};
 	}
 };

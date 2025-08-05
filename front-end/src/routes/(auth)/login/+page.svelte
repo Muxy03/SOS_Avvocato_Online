@@ -17,7 +17,7 @@
 	const formValid = $derived(emailValid && passwordValid);
 	let error: { value: string } | undefined = $state({ value: '' });
 	let user: { value: UserData | undefined } | undefined = $state({ value: undefined });
-	
+
 	// let RememberMe: { value: boolean } | undefined = $state({ value: undefined });
 	// onMount(() => {
 	// 	const App: AppContext = getContext('App');
@@ -55,8 +55,7 @@
 						await update();
 					} else if (result.type === 'failure') {
 						// TODO: HANDLE FIREBASE ERROR
-						//error.value = result.data?.error as string;
-						console.log('ERRORE');
+						error.value = result.data?.error as string;
 						await update();
 					} else if (result.type === 'redirect') {
 						await signInWithEmailAndPassword(firebase.auth, email, password);
