@@ -2,8 +2,14 @@
 	import { page } from '$app/state';
 	import Modal from '$lib/components/Modal.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	let { data, children } = $props() as { data?: any; children: any };
 	const user = $state({ ...data.user });
+
+	onMount(() => {
+		const tmp = getContext('CAZZO');
+		setContext('CAZZO', tmp);
+	});
 </script>
 
 <div class="flex h-full w-full flex-col items-center gap-6">

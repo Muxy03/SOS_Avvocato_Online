@@ -3,6 +3,7 @@
 	import type { FILE, Email, AppContext } from '$lib';
 	import { toBase64Browser } from '$lib/brevo';
 	import { getContext, onMount } from 'svelte';
+	import Modal from './Modal.svelte';
 
 	// State variables
 	let to = $state('a.mussari@studenti.unipi.it');
@@ -16,7 +17,8 @@
 	let errors = $derived({ to: to, subject: subject, message: message });
 	let fileInput: HTMLInputElement | undefined = $state();
 
-	let  error  = {value :''};
+	let error = $state({ value: '' });
+	let showModal = $derived(error.value.length > 0);
 
 	// Utility functions
 	function formatFileSize(bytes: number) {
@@ -25,10 +27,6 @@
 		const sizes = ['Bytes', 'KB', 'MB', 'GB'];
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-	}
-
-	function getFileIcon(fileName: string) {
-		return '📎';
 	}
 
 	function handleFileSelect(event: Event) {
@@ -80,9 +78,8 @@
 			errors = { to, subject, message };
 		}
 	}
-	onMount(()=>{
-		error = getContext('App');
-	})
+
+	$inspect(error);
 </script>
 
 <div class="flex items-center justify-center">
@@ -123,7 +120,8 @@
 						await update();
 					} else if (result.type === 'failure') {
 						// TODO: Handle FIREBASE ERROR
-						//error.value = result.data?.code as string;
+						console.error(result.data);
+						error.value = result.data?.message as string;
 						await update();
 					}
 				};
@@ -137,7 +135,7 @@
 					type="email"
 					bind:value={to}
 					placeholder="recipient@example.com"
-					class="w-full rounded-md border border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 				<!-- {#if errors.to}
 						<p class="mt-1 text-sm text-red-600">{errors.to}</p>
@@ -165,7 +163,7 @@
 							type="email"
 							bind:value={cc}
 							placeholder="cc@example.com"
-							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 						/>
 					</div>
 					<div>
@@ -175,7 +173,7 @@
 							type="email"
 							bind:value={bcc}
 							placeholder="bcc@example.com"
-							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 						/>
 					</div>
 				</div>
@@ -191,7 +189,7 @@
 					type="text"
 					bind:value={subject}
 					placeholder="Enter email subject"
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 				<!-- {#if errors.subject}
 						<p class="mt-1 text-sm text-red-600">{errors.subject}</p>
@@ -208,7 +206,7 @@
 					rows="6"
 					bind:value={message}
 					placeholder="Enter your message here..."
-					class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+					class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				></textarea>
 				<!-- {#if errors.message}
 						<p class="mt-1 text-sm text-red-600">{errors.message}</p>
@@ -281,6 +279,19 @@
 		<!-- </div> -->
 	</div>
 </div>
+
+{#if error.value.length > 0}
+	<Modal bind:showModal>
+		{#snippet header()}
+			<h2>ERROR</h2>
+		{/snippet}
+
+		{error.value}
+
+		<!-- <ol class="definition-list">
+			</ol> -->
+	</Modal>
+{/if}
 
 <style>
 	.file-item {

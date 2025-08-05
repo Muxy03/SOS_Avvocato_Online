@@ -19,7 +19,6 @@
 	// const isOnline = $state({ value: true });
 	const rememberMe = $state({ value: true });
 	let user: { value: User | undefined } = $state({ value: undefined });
-	const error = $state({ value: '' });
 	const isLoading = $state({ value: navigating.complete !== null });
 	let showModal = $state(false);
 
@@ -45,9 +44,8 @@
 	onMount(() => {
 		registerServiceWorker();
 
-		setContext('App', {
-			error
-		});
+		let error = $state({ value: '' });
+		setContext('CAZZO', error);
 
 		async () => {
 			try {
