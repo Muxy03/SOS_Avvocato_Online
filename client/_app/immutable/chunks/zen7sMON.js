@@ -1,0 +1,1 @@
+import{k as a}from"./CB0GAoS5.js";a();

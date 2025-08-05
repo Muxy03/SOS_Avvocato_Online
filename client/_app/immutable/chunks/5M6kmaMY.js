@@ -1,1 +1,0 @@
-import{m as a}from"./D50pdiVl.js";a();
