@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { navigating } from '$app/state';
-	import type { AppContext, UserData } from '$lib';
+	import type { UserData } from '$lib';
 	import LoadingPage from '$lib/components/LoadingPage.svelte';
 	import firebase from '$lib/firebase';
 	import { clearUserSession, getInitials } from '$lib/Locally';
 	import { Online } from '$lib/shared.svelte.js';
 	import { signOut } from 'firebase/auth';
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
 
@@ -52,7 +52,6 @@
 	}
 
 	onMount(() => {
-		error = getContext('App');
 		setUser();
 	});
 </script>
@@ -95,15 +94,15 @@
 					>
 						<div class="flex h-[60px] w-[280px] items-center gap-1 rounded-2xl bg-blue-500">
 							<div
-								class="flex-1/4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white"
+								class="flex h-10 w-10 flex-1/4 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white"
 							>
 								{getInitials(user.value.FullName, user.value.email)}
 							</div>
-							<div class="flex-3/4 w-full text-center">
-								<h2 class="break-words text-xl font-bold text-white">
+							<div class="w-full flex-3/4 text-center">
+								<h2 class="text-xl font-bold break-words text-white">
 									{user.value.FullName}
 								</h2>
-								<p class="break-all text-sm text-white">{user.value.email}</p>
+								<p class="text-sm break-all text-white">{user.value.email}</p>
 							</div>
 						</div>
 					</a>

@@ -1,9 +1,5 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getContext } from 'svelte';
-import type { AppContext } from '$lib';
-
-// const { error }: AppContext = getContext('App');
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { FILE, Email, AppContext } from '$lib';
+	import type { FILE } from '$lib';
 	import { toBase64Browser } from '$lib/brevo';
-	import { getContext, onMount } from 'svelte';
 	import Modal from './Modal.svelte';
 
 	// State variables
@@ -78,26 +77,13 @@
 			errors = { to, subject, message };
 		}
 	}
-
-	$inspect(error);
 </script>
 
 <div class="flex items-center justify-center">
 	<div class="flex w-[300px] flex-col items-center justify-center">
-		<!-- <div
-			class="flex w-full flex-col items-center justify-around gap-5 overflow-hidden rounded-lg bg-white shadow-lg"
-		> -->
-		<!-- Header -->
-		<!-- <div class="flex flex-col items-center justify-center gap-1 bg-white">
-				<h1 class="text-2xl font-bold text-blue-600">Send Email</h1>
-				<div class="w-full border-t border-t-blue-600"></div>
-				<p class=" text-center text-blue-500">Compose and send your message with attachments</p>
-				<div class="w-full border-t border-t-blue-600"></div>
-			</div> -->
-
 		<!-- Form -->
 		<form
-			class="flex flex-col items-center gap-1 rounded-lg bg-white p-5 shadow-lg"
+			class="flex max-h-[500px] flex-col items-center gap-1 rounded-lg bg-white p-5 shadow-lg"
 			method="POST"
 			action="?/sendEmail"
 			use:enhance={async ({ formData }) => {
@@ -135,49 +121,12 @@
 					type="email"
 					bind:value={to}
 					placeholder="recipient@example.com"
-					class="w-full rounded-md border border-gray-300 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class=" w-full rounded-md border border-gray-300 text-center focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 				<!-- {#if errors.to}
 						<p class="mt-1 text-sm text-red-600">{errors.to}</p>
 					{/if} -->
 			</div>
-
-			<!-- CC/BCC toggle -->
-			{#if !showCcBcc}
-				<button
-					type="button"
-					onclick={() => (showCcBcc = true)}
-					class="text-sm font-medium text-blue-600 hover:text-blue-800"
-				>
-					+ Add CC/BCC
-				</button>
-			{/if}
-
-			<!-- CC/BCC fields -->
-			{#if showCcBcc}
-				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-					<div>
-						<label for="cc-email" class="mb-2 block text-sm font-medium text-gray-700">CC</label>
-						<input
-							id="cc-email"
-							type="email"
-							bind:value={cc}
-							placeholder="cc@example.com"
-							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-						/>
-					</div>
-					<div>
-						<label for="bcc-email" class="mb-2 block text-sm font-medium text-gray-700">BCC</label>
-						<input
-							id="bcc-email"
-							type="email"
-							bind:value={bcc}
-							placeholder="bcc@example.com"
-							class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-						/>
-					</div>
-				</div>
-			{/if}
 
 			<!-- Subject field -->
 			<div>
@@ -214,7 +163,7 @@
 			</div>
 
 			<!-- Attachments section -->
-			<div class="flex flex-col items-center gap-2">
+			<div class="flex flex-col items-center gap-2 overflow-y-scroll">
 				<label for="files" class="mb-2 block text-sm font-medium text-gray-700">Attachments</label>
 
 				<input
@@ -231,13 +180,7 @@
 					<div class="space-y-2">
 						{#each attachments as attachment}
 							<div class="file-item flex items-center justify-between rounded-lg bg-gray-50">
-								<div class="flex items-center justify-center gap-1">
-									<!-- <span class="text-md">{getFileIcon(attachment.name)}</span> -->
-									<div>
-										<p class="font-medium text-gray-900">{attachment.name}</p>
-										<p class="text-sm text-gray-500">{formatFileSize(attachment.size)}</p>
-									</div>
-								</div>
+								<p class="font-medium text-gray-900">{attachment.name}</p>
 								<button
 									type="button"
 									onclick={() => removeAttachment(attachment.id)}
@@ -249,10 +192,10 @@
 						{/each}
 					</div>
 				{/if}
+			</div>
 
-				<div class="text-sm text-gray-500">
-					{attachments.length} file(s) attached
-				</div>
+			<div class="text-sm text-gray-500">
+				{attachments.length} file(s) attached
 			</div>
 
 			<!-- Submit section -->

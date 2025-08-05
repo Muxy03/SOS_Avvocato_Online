@@ -57,7 +57,7 @@
 </script>
 
 <!-- Navbar Container -->
-<div class="z-50 flex h-auto items-center justify-around pt-3" role="presentation">
+<div class="fixed top-0 left-0 right-0 z-50 flex h-auto items-center justify-around pt-3" role="presentation">
 	<nav
 		class="flex h-full items-center justify-center gap-3 rounded-xl bg-white px-3 shadow-lg backdrop-blur-sm"
 	>

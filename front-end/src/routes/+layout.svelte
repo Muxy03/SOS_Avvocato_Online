@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { onDestroy, onMount, setContext } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import {
 		onAuthStateChanged,
 		setPersistence,
@@ -44,14 +44,11 @@
 	onMount(() => {
 		registerServiceWorker();
 
-		let error = $state({ value: '' });
-		setContext('CAZZO', error);
-
 		async () => {
 			try {
 				await setPersistence(firebase.auth, browserLocalPersistence);
 			} catch (err) {
-				error.value = 'Could not set auth persistence:' + err;
+				// error.value = 'Could not set auth persistence:' + err;
 				// console.warn('Could not set auth persistence:', err);
 			}
 		};
@@ -60,9 +57,7 @@
 			if (authUser) {
 				user.value = authUser;
 				storeUserSession(authUser);
-			} // } else {
-			// 	clearUserSession();
-			// }
+			}
 		});
 
 		updateOnlineStatus();
@@ -98,16 +93,5 @@
 		<div class="flex h-full w-full items-center justify-center">
 			{@render children()}
 		</div>
-
-		<Modal bind:showModal>
-			{#snippet header()}
-				<h2>ERROR</h2>
-			{/snippet}
-
-			{page.error?.message}
-
-			<!-- <ol class="definition-list">
-			</ol> -->
-		</Modal>
 	</main>
 </div>

@@ -4,10 +4,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import firebase from '$lib/firebase';
 import { doc, getDocs, updateDoc, collection } from 'firebase/firestore';
 import type { PageServerLoad } from '../$types';
-import type { AppContext, UserData } from '$lib';
-import { getContext } from 'svelte';
-
-// const { error }: AppContext = getContext('App');
+import type { UserData } from '$lib';
 
 export const actions: Actions = {
 	login: async ({ fetch, request }) => {

@@ -3,11 +3,8 @@ import type { Actions } from '@sveltejs/kit';
 import firebase from '$lib/firebase';
 import { fail, redirect } from '@sveltejs/kit';
 import { addDoc, collection } from 'firebase/firestore';
-import type { AppContext, UserData } from '$lib';
+import type { UserData } from '$lib';
 import type { PageServerLoad } from '../$types';
-import { getContext } from 'svelte';
-
-// const { error }:AppContext = getContext('App');
 
 export const actions: Actions = {
 	register: async ({ fetch, request }) => {

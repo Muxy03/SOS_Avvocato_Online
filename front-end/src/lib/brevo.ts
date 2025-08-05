@@ -1,9 +1,7 @@
 import { addDoc, arrayUnion, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import firebase from './firebase';
-import type { Email, Consultation, Attachment, AppContext } from '$lib';
-import { getContext } from 'svelte';
-
-//const { error }: AppContext = getContext('App');
+import type { Email, Consultation, Attachment } from '$lib';
+import { fail } from '@sveltejs/kit';
 
 export function toBase64Browser(file: File | Blob): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -41,7 +39,7 @@ export async function sendTransactionalEmail(
 
 	if (!resp.ok) {
 		const errorBody = await resp.json().catch(() => null);
-		throw new Error(`HTTP ${resp.status}: ${JSON.stringify(errorBody)}`);
+		return fail(resp.status, { message: "ERROR:"+JSON.stringify(errorBody) });
 	}
 
 	const { messageId } = await resp.json();
@@ -61,7 +59,7 @@ export async function sendTransactionalEmail(
 
 		if (!User) {
 			//error.value = 'NO USER';
-			throw new Error('NO USER');
+			return fail(404, { message: 'user not found' });
 		}
 
 		await updateDoc(doc(firebase.db, 'Users', User.id), {
@@ -80,6 +78,7 @@ export async function sendTransactionalEmail(
 		});
 	} catch (err) {
 		//error.value = 'Failed to save email to Firestore:' + err;
+		return fail(404, {message: "Failed to save email to Firestore"})
 		console.error('Failed to save email to Firestore:', err);
 	}
 

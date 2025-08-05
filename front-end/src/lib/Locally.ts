@@ -1,10 +1,7 @@
 // import { serverTimestamp } from 'firebase/firestore';
 //import type { UserData } from '$lib';
-import type { AppContext } from '$lib';
 import type { User } from 'firebase/auth';
-import { getContext } from 'svelte';
 
-//const { error }: AppContext = getContext('App');
 
 export function getInitials(name: string, email: string) {
 	if (name && name.trim()) {
@@ -43,7 +40,6 @@ export async function clearUserSession() {
 		method: 'DELETE',
 		credentials: 'same-origin'
 	});
-	// Optionally redirect or update UI after logout
 }
 
 export async function getUserSession() {
@@ -59,9 +55,6 @@ export async function getUserSession() {
 
 	return null;
 }
-
-// Service Worker registration
-// Add this to your main Svelte app (e.g., in App.svelte or main.js)
 
 export function registerServiceWorker() {
 	if ('serviceWorker' in navigator) {

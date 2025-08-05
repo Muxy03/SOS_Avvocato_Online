@@ -3,8 +3,7 @@
 	import { signInWithEmailAndPassword, type User } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
-	import type { AppContext, UserData } from '$lib';
-	import { getContext, onMount } from 'svelte';
+	import type { UserData } from '$lib';
 
 	// Component state
 	let email = $state('');
@@ -17,14 +16,9 @@
 	const formValid = $derived(emailValid && passwordValid);
 	let error: { value: string } | undefined = $state({ value: '' });
 	let user: { value: UserData | undefined } | undefined = $state({ value: undefined });
-
 	// let RememberMe: { value: boolean } | undefined = $state({ value: undefined });
-	// onMount(() => {
-	// 	const App: AppContext = getContext('App');
-	// 	RememberMe = { ...App.RememberMe };
-	// 	user = { ...App.user };
-	// 	error = { ...App.error };
-	// });
+
+
 </script>
 
 <div

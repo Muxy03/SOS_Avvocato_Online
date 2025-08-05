@@ -17,7 +17,7 @@
 	}
 </script>
 
-<div class="flex w-full flex-col items-center justify-between gap-3">
+<div class="flex w-full flex-col items-center justify-center gap-3">
 	{#if consultations.length === 0}
 		<p class="text-center text-xl font-bold text-gray-900">Nessuna consultazione trovata</p>
 	{:else if error}

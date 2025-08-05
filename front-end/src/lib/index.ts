@@ -9,14 +9,6 @@
 //     state: State
 // }
 
-export interface AppContext {
-	isOnline: { value: boolean };
-	isLoading: { value: boolean };
-	user: { value: UserData | undefined };
-	error: { value: string };
-	RememberMe: { value: boolean };
-}
-
 export type UserData = {
 	DocId: string;
 	id: string;

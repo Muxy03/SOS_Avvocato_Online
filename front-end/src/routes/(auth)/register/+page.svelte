@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { AppContext, UserData } from '$lib';
+	import type { UserData } from '$lib';
 	import firebase from '$lib/firebase';
 	import { redirect } from '@sveltejs/kit';
 	import { createUserWithEmailAndPassword, type User } from 'firebase/auth';
-	import { getContext, onMount, setContext } from 'svelte';
 
 	// Component state
 	let email = $state('');
@@ -21,33 +20,9 @@
 	let error: { value: string } | undefined = $state({ value: '' });
 	let user: { value: UserData | undefined } | undefined = $state({ value: undefined });
 	// let RememberMe: { value: boolean } | undefined = $state({ value: undefined });
-
-	// onMount(() => {
-	// 	const App: AppContext = getContext('App');
-	// 	RememberMe = { ...App.RememberMe };
-	// 	user = { ...App.user };
-	// 	error = { ...App.error };
-	// });
-
-	// $effect(() => {
-	// 	let tmp: AppContext = getContext('App');
-	// 	if (user) {
-	// 		tmp.user = user;
-	// 	}
-
-	// 	if (error) {
-	// 		tmp.error = error;
-	// 	}
-
-	// 	if (RememberMe) {
-	// 		tmp.RememberMe = RememberMe;
-	// 	}
-
-	// 	setContext('App', tmp);
-	// });
 </script>
 
-<div class="container relative flex flex-col items-center justify-center">
+<div class="relative container flex flex-col items-center justify-center">
 	<div class="auth-card flex flex-col items-center justify-center gap-3">
 		<div class="auth-header">
 			<h1>Registrati</h1>

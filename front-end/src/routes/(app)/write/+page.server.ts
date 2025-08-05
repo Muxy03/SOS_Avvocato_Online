@@ -26,8 +26,13 @@ export const actions = {
 		});
 
 		if (user_session.ok) {
-			const user = await user_session.json();
-			await sendTransactionalEmail(Test, user.id, attachments, fetch);
+			try {
+				const user = await user_session.json();
+				await sendTransactionalEmail(Test, user.id, attachments, fetch);
+			} catch (error: unknown) {
+				console.error(error);
+				return fail(123, { message: (error as { message: string }).message });
+			}
 		} else {
 			return fail(404, {
 				message: 'User not authenticated'
